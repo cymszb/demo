@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">zgluesports</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="string_person_info">Personal Information</string>
+</resources>
