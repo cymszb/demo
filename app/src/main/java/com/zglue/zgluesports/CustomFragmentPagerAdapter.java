@@ -3,7 +3,6 @@ package com.zglue.zgluesports;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.view.ViewGroup;
 
 /**
  * Created by Micki on 2017/11/5.
@@ -11,23 +10,29 @@ import android.view.ViewGroup;
 
 public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    public final static int PAGE_COUNT = 3;
+
     public CustomFragmentPagerAdapter(FragmentManager fm){
         super(fm);
     }
 
     @Override
     public Fragment getItem(int positon){
-        return null;
+
+        switch (positon){
+            case 0:
+                return new PersionalInfoFragment();
+            case 1:
+                return new SportsInfoFragment();
+            case 2:
+                return new PersionalInfoFragment();
+            default:
+                return null;
+        }
     }
 
     @Override
-    public int getCount(){return 0;}
-
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position){
-        return null;
-    }
+    public int getCount(){return PAGE_COUNT;}
 
 
 
