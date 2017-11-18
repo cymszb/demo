@@ -27,6 +27,6 @@ public class BottomNavigationViewExtra extends BottomNavigationView {
 
 
     private void init(){
-
+        BottomNavigationViewHelper.disableShiftMode(this);
     }
 }

@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">zgluesports</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_activity">Activity</string>
+    <string name="title_health">Health</string>
+    <string name="title_me">Me</string>
     <string name="string_person_info">Personal Information</string>
+    <string name="string_not_available">Not Available</string>
+    <string name="string_not_available_description">This feature is still under development</string>
 </resources>

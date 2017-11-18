@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:gravity="center">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:background="@color/color_blue">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/string_person_info"
-            android:textColor="@android:color/white"
-            android:layout_margin="20dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+        android:orientation="vertical">
+
 
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="0dp"
-            android:src="@mipmap/ic_launcher_round"/>
+            android:alpha=".5"
+            app:srcCompat="@drawable/ic_language_black_48px"/>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
+            android:text="@string/string_not_available"
+            android:textColor="@color/text_color_c13"
             android:layout_margin="20dp"
-            android:textColor="@android:color/white"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/string_not_available_description"
+            android:layout_margin="20dp"
+            android:textColor="@color/text_color_c13"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
     </LinearLayout>

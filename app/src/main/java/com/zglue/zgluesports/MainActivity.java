@@ -29,16 +29,22 @@ public class MainActivity extends AppCompatActivity {
                     //mTextMessage.setText(R.string.title_home);
                     mViewPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_activity:
                     //mTextMessage.setText(R.string.title_dashboard);
                     mViewPager.setCurrentItem(1);
                     return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_health:
                     //mTextMessage.setText(R.string.title_notifications);
                     mViewPager.setCurrentItem(2);
                     return true;
+                case R.id.navigation_me:
+                    //mTextMessage.setText(R.string.title_notifications);
+                    mViewPager.setCurrentItem(3);
+                    return true;
+                default:
+                    return false;
             }
-            return false;
+
         }
 
     };
@@ -60,10 +66,13 @@ public class MainActivity extends AppCompatActivity {
                         mNavigation.setSelectedItemId(R.id.navigation_home);
                         break;
                     case 1:
-                        mNavigation.setSelectedItemId(R.id.navigation_dashboard);
+                        mNavigation.setSelectedItemId(R.id.navigation_activity);
                         break;
                     case 2:
-                        mNavigation.setSelectedItemId(R.id.navigation_notifications);
+                        mNavigation.setSelectedItemId(R.id.navigation_health);
+                        break;
+                    case 3:
+                        mNavigation.setSelectedItemId(R.id.navigation_me);
                         break;
                     default:
                         mNavigation.setSelectedItemId(R.id.navigation_home);
@@ -88,5 +97,6 @@ public class MainActivity extends AppCompatActivity {
         mNavigation= (BottomNavigationViewExtra)  findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
 
 }

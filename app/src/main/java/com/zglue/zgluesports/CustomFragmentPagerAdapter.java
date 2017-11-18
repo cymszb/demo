@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final static int PAGE_COUNT = 3;
+    public final static int PAGE_COUNT = 4;
 
     public CustomFragmentPagerAdapter(FragmentManager fm){
         super(fm);
@@ -25,7 +25,9 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new SportsInfoFragment();
             case 2:
-                return new PersionalInfoFragment();
+                return new BlankFragment();
+            case 3:
+                return new BlankFragment();
             default:
                 return null;
         }
