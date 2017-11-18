@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -7,5 +7,37 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="TextStyleTitle" parent="TextAppearance.AppCompat.Title">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+    </style>
+
+
+    <style name="TextStyleLarge" parent="TextAppearance.AppCompat.Large">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+    </style>
+
+    <style name="TextStyleMedium" parent="TextAppearance.AppCompat.Medium">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+    </style>
+
+    <style name="TextStyleSmall" parent="TextAppearance.AppCompat.Small">
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+    </style>
+
+    <style name="TextStyleDescription" parent="TextStyleSmall">
+        <!-- Customize your theme here. -->
+        <item name="android:textColor" >@color/color_grey</item>
+    </style>
+
+    <style name="TextStyleNumber" parent="TextStyleLarge">
+        <!-- Customize your theme here. -->
+        <item name="android:textColor" >@color/color_white</item>
+    </style>
+
 
 </resources>
