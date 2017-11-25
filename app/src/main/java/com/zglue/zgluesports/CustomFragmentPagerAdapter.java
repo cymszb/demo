@@ -21,7 +21,7 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
 
         switch (positon){
             case 0:
-                return new BlankFragment();
+                return new HomeFragment();
             case 1:
                 return new SportsInfoFragment();
             case 2:
