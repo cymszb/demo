@@ -18,7 +18,7 @@ public class PersionalInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mFragmentView = inflater.from(this.getContext()).inflate(R.layout.user_info,null);
+        mFragmentView = inflater.from(this.getContext()).inflate(R.layout.me,null);
         return mFragmentView;
     }
 }

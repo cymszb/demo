@@ -12,9 +12,19 @@
     <color name="color_pink">#E91E63</color>
 
     <color name="color_purple">#9C27B0</color>
+
     <color name="color_deep_purple">#673AB7</color>
+    <color name="color_deep_purple_500">#673AB7</color>
+    <color name="color_deep_purple_800">#4527A0</color>
+    <color name="color_deep_purple_500_alpha">#CC673AB7</color>
+    <color name="color_deep_purple_800_alpha">#CC4527A0</color>
 
     <color name="color_indigo">#3F51B5</color>
+    <color name="color_indigo_500">#3F51B5</color>
+    <color name="color_indigo_800">#283593</color>
+    <color name="color_indigo_500_alpha">#CC3F51B5</color>
+    <color name="color_indigo_800_alpha">#CC283593</color>
+
 
     <color name="color_blue">#2196F3</color>
     <color name="color_light_blue">#03A9F4</color>
@@ -22,6 +32,12 @@
     <color name="color_cyan">#00BCD4</color>
 
     <color name="color_green">#4CAF50</color>
+    <color name="color_green_500">#4CAF50</color>
+    <color name="color_green_800">#2E7D32</color>
+    <color name="color_green_500_alpha">#CC4CAF50</color>
+    <color name="color_green_800_alpha">#CC2E7D32</color>
+
+
     <color name="color_light_green">#8BC34A</color>
 
     <color name="color_lime">#CDDC39</color>
@@ -30,6 +46,11 @@
     <color name="color_amber">#FFC107</color>
 
     <color name="color_orange">#FF9800</color>
+    <color name="color_orange_500">#FF9800</color>
+    <color name="color_orange_800">#EF6C00</color>
+    <color name="color_orange_500_alpha">#CCFF9800</color>
+    <color name="color_orange_800_alpha">#CCEF6C00</color>
+
     <color name="color_deep_orange">#FF5722</color>
 
     <color name="color_brown">#795548</color>
@@ -38,6 +59,8 @@
     <color name="color_blue_grey">#607D8B</color>
 
     <color name="color_black">#000000</color>
+
     <color name="color_white">#FFFFFF</color>
+    <color name="color_white_alpha">#80FFFFFF</color>
 
 </resources>

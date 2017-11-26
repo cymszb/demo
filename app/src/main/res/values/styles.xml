@@ -10,7 +10,7 @@
 
     <style name="TextStyleTitle" parent="TextAppearance.AppCompat.Title">
         <!-- Customize your theme here. -->
-        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif</item>
     </style>
 
 

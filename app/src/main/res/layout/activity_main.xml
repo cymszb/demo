@@ -5,6 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/wallpaper"
     android:orientation="vertical"
     tools:context="com.zglue.zgluesports.MainActivity">
 
@@ -41,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="?android:attr/windowBackground"
+        android:background="@color/color_white_alpha"
         app:menu="@menu/navigation" />
 
 

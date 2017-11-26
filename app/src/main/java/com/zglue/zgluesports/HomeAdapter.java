@@ -1,14 +1,11 @@
 package com.zglue.zgluesports;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 /**
  * Created by Micki on 2017/11/25.
@@ -47,7 +44,23 @@ public class HomeAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null){
             //HomeItemData data = mDataArray.get(position);
-            convertView = ((LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.home_grid_item,null);
+            switch (position){
+                case 0:
+                    convertView = new HomeHearBeatView(mContext);
+                    break;
+                case 1:
+                    convertView = new HomeSleepView(mContext);
+                    break;
+                case 2:
+                    convertView = new HomeStepView(mContext);
+                    break;
+                case 3:
+                    convertView = new HomeTemperatureView(mContext);
+                    break;
+                default:
+                    convertView = new HomeHearBeatView(mContext);
+                    break;
+            }
         }
         return convertView;
     }

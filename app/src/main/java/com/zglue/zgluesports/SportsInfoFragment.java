@@ -18,7 +18,7 @@ public class SportsInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mFragmentView = inflater.from(this.getContext()).inflate(R.layout.sports_info,null);
+        mFragmentView = inflater.from(this.getContext()).inflate(R.layout.activity,null);
         return mFragmentView;
     }
 }
