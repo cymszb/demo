@@ -23,7 +23,7 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new HomeFragment();
             case 1:
-                return new SportsInfoFragment();
+                return new ActivityFragment();
             case 2:
                 return new BlankFragment();
             case 3:
