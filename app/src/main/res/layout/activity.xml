@@ -72,11 +72,13 @@
                         android:textAppearance="@style/TextStyleNumber"
                         android:textColor="@android:color/white"
                         android:text="358"/>
+
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextStyleDescription"
-                        android:text="Calories"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calories"
+                    android:textAppearance="@style/TextStyleDescription"
+                    android:textColor="@color/color_white" />
 
             </LinearLayout>
 
@@ -105,10 +107,11 @@
                         android:text="5"/>
 
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextStyleDescription"
-                        android:text="Fat-Burn"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fat-Burn"
+                    android:textAppearance="@style/TextStyleDescription"
+                    android:textColor="@color/color_white" />
 
             </LinearLayout>
 
@@ -137,10 +140,11 @@
                         android:text="0"/>
 
                 <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextStyleDescription"
-                        android:text="Kilometers"/>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kilometers"
+                    android:textAppearance="@style/TextStyleDescription"
+                    android:textColor="@color/color_white" />
 
             </LinearLayout>
         </LinearLayout>

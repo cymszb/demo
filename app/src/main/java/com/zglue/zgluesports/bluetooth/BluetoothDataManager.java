@@ -27,6 +27,11 @@ public class BluetoothDataManager {
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
 
+    private int mHeartBeat;
+    private int mSteps;
+    private int mTemprature;
+    private int mBatteryPercent;
+
     private int mConnectionState = STATE_DISCONNECTED;
 
     private static final int STATE_DISCONNECTED = 0;
@@ -80,10 +85,11 @@ public class BluetoothDataManager {
 
     private BluetoothDataManager(Context context){
         mContext = context;
+        initialise(context);
         //init(context);
     }
 
-    public synchronized BluetoothDataManager getInstance(Context context){
+    public static synchronized BluetoothDataManager getInstance(Context context){
         if(mInstance == null){
             mInstance = new BluetoothDataManager(context);
         }
@@ -198,9 +204,10 @@ public class BluetoothDataManager {
      */
     public List<BluetoothGattService> getSupportedGattServices() {
         if (mBluetoothGatt == null) return null;
-
         return mBluetoothGatt.getServices();
     }
+
+    /**/
 
 
 

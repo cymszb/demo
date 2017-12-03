@@ -62,7 +62,7 @@
 
     <color name="color_black">#000000</color>
 
-    <color name="color_white">#FFFFFF</color>
+    <color name="color_white">#ffffff</color>
     <color name="color_white_alpha">#80FFFFFF</color>
 
 </resources>
