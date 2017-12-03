@@ -1,5 +1,12 @@
 package com.zglue.zgluesports;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.RouteInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -7,9 +14,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+
+import static com.github.mikephil.charting.charts.Chart.LOG_TAG;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mViewPager= (ViewPager)findViewById(R.id.content_pager);
+        mViewPager = (ViewPager) findViewById(R.id.content_pager);
         mFragmentPagerAdapter = new CustomFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mFragmentPagerAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -61,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
-                switch (position){
+                switch (position) {
                     case 0:
                         mNavigation.setSelectedItemId(R.id.navigation_home);
                         break;
@@ -91,12 +108,129 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
                 // Code goes here
             }
+
+
         });
 
         //mTextMessage = (TextView) findViewById(R.id.message);
-        mNavigation= (BottomNavigationViewExtra)  findViewById(R.id.navigation);
+        mNavigation = (BottomNavigationViewExtra) findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        ArrayList<String> ips = getIpv4Addresses();
+        Log.e("Demo","Current active network: " + isConnect(this) + "; interface: " + activeNetwork(this));
+        Log.e("Demo","Interface info: " + ips.size() );
+        for(String ip:ips){
+            Log.e("Demo","ip:" + ip);
+        }
+
+        getDefaultNetwork(this);
+    }
+
+    @SuppressLint("NewApi")
+    private String[] getDefaultNetwork(Context context)  {
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
+        //LinkProperties network = connectivity.getActiveLinkProperties();
+        Network[] allNetworks = connectivity.getAllNetworks();
+        for(Network net:allNetworks){
+            LinkProperties network = connectivity.getLinkProperties(net);
+            String gateway = null;
+            for (RouteInfo route : network.getRoutes()) {
+                //Log.e("Demo","network gateway: " + route.getGateway().getHostAddress());
+                // Currently legacy VPN only works on IPv4.
+                if (route.isDefaultRoute() && route.getGateway() instanceof Inet4Address) {
+                    gateway = route.getGateway().getHostAddress();
+                    Log.e("Demo","default gateway: " + gateway);
+                    break;
+                }
+            }
+
+        }
+
+        return null;
+/*
+        if (network == null) {
+            throw new IllegalStateException("Network is not available");
+        }
+        String interfaze = network.getInterfaceName();
+        if (interfaze == null) {
+            throw new IllegalStateException("Cannot get the default interface");
+        }
+        String gateway = null;
+        for (RouteInfo route : network.getRoutes()) {
+            // Currently legacy VPN only works on IPv4.
+            if (route.isDefaultRoute() && route.getGateway() instanceof Inet4Address) {
+                gateway = route.getGateway().getHostAddress();
+                break;
+            }
+        }
+        if (gateway == null) {
+            throw new IllegalStateException("Cannot get the default gateway");
+        }
+        return new String[] {interfaze, gateway};
+        */
     }
 
 
+    public static String activeNetwork(Context context){
+        String intf = new String("Ignore");
+        try {
+            ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity != null) {
+                NetworkInfo info = connectivity.getActiveNetworkInfo();
+
+                if (info != null && info.isConnected()) {
+                    if (info.getState() == NetworkInfo.State.CONNECTED) {
+                        intf = info.toString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Demo","Exception: " +e.getMessage() );
+        }
+
+        return intf;
+    }
+
+    public static boolean isConnect(Context context) {
+
+        try {
+            ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivity != null) {
+                NetworkInfo info = connectivity.getActiveNetworkInfo();
+
+                if (info != null && info.isConnected()) {
+                    if (info.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Demo","Exception: " +e.getMessage() );
+        }
+
+        return false;
+
+    }
+
+    public static ArrayList<String> getIpv4Addresses() {
+        ArrayList<String> ips = new ArrayList<>();
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();  ){
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&& inetAddress instanceof Inet4Address) {
+                        ips.add( inetAddress.getHostAddress());
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("Demo", ex.getMessage());
+        }
+        return ips;
+    }
 }
