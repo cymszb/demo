@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,11 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zglue.zgluesports.bluetooth.BluetoothDataManager;
+import com.zglue.zgluesports.bluetooth.ConnectionListener;
 
 import java.util.ArrayList;
 
@@ -33,7 +37,7 @@ import java.util.ArrayList;
  * Created by Micki on 2017/12/3.
  */
 
-public class BluetoothScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class BluetoothScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,ConnectionListener{
     public final static String TAG = "BluetoothScanActivity";
 
     private LeDeviceListAdapter mLeDeviceListAdapter;
@@ -140,6 +144,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         mLeDeviceListAdapter = new LeDeviceListAdapter();
         //setListAdapter(mLeDeviceListAdapter);
         mDeviceList.setAdapter(mLeDeviceListAdapter);
+        bleManager.addConnectionListener(this);
         scanLeDevice(true);
     }
 
@@ -158,6 +163,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         super.onPause();
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
+        bleManager.removeConnectionListener(this);
     }
 
     @Override
@@ -174,6 +180,11 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
             mScanning = false;
 
         }
+        ViewHolder holder = (ViewHolder)mDeviceList.getChildAt(position).getTag();
+
+        //holder.connBtn.setVisibility(View.INVISIBLE);
+        holder.bar.setVisibility(View.VISIBLE);
+        holder.deviceStatus.setVisibility(View.INVISIBLE);
 
         bleManager.connect(device.getAddress());
         //startActivity(intent);
@@ -186,22 +197,31 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         }
         return true;
     }
-    /*
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d(TAG,"onListItemClick, on pistion:" + position);
 
-        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
-        if (device == null) return;
-        //final Intent intent = new Intent(this, DeviceControlActivity.class);
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
-        if (mScanning) {
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            mScanning = false;
-        }
-        //startActivity(intent);
+
+    public void OnConnectStatusChanged(final BluetoothDevice device,final int state){
+        Log.e(TAG,"OnConnectStatusChanged,state:" + state);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0;i<mLeDeviceListAdapter.getCount();i++){
+                    if(device.getAddress().equals( ((BluetoothDevice)mLeDeviceListAdapter.getItem(i)).getAddress())){
+                        ViewHolder holder = (ViewHolder)mDeviceList.getChildAt(i).getTag();
+                        //holder.connBtn.setVisibility(View.INVISIBLE);
+                        holder.bar.setVisibility(View.INVISIBLE);
+                        holder.deviceStatus.setVisibility(View.VISIBLE);
+                        if(state == BluetoothProfile.STATE_CONNECTED) {
+                            holder.deviceStatus.setText("Online");
+                        }else{
+                            holder.deviceStatus.setText("Offline");
+                        }
+                    }
+
+                }
+            }
+        });
     }
-    */
+
     private void scanLeDevice(final boolean enable) {
         if (enable) {
             // Stops scanning after a pre-defined scan period.
@@ -265,13 +285,16 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            ViewHolder viewHolder;
+            final ViewHolder viewHolder;
             // General ListView optimization code.
             if (view == null) {
                 view = LayoutInflater.from(BluetoothScanActivity.this).inflate(R.layout.scan_list, null);
                 viewHolder = new ViewHolder();
                 viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
                 viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
+                //viewHolder.connBtn = (Button)view.findViewById(R.id.connect_btn);
+                viewHolder.deviceStatus = (TextView)view.findViewById(R.id.connect_status);
+                viewHolder.bar = (ProgressBar)view.findViewById(R.id.connect_btn_progress_bar);
                 view.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) view.getTag();
@@ -308,5 +331,8 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
     static class ViewHolder {
         TextView deviceName;
         TextView deviceAddress;
+        //Button connBtn;
+        TextView deviceStatus;
+        ProgressBar bar;
     }
 }

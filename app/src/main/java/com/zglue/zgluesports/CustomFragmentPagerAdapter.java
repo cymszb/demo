@@ -25,7 +25,7 @@ public class CustomFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new ActivityFragment();
             case 2:
-                return new BlankFragment();
+                return new HealthFragment();
             case 3:
                 return new PersionalInfoFragment();
             default:

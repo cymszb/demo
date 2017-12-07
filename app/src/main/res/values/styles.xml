@@ -39,5 +39,16 @@
         <item name="android:textColor" >@color/color_white</item>
     </style>
 
+    <style name="ProgressBar.Blue" parent="@android:style/Widget.Holo.ProgressBar.Small">
+        <item name="android:indeterminateDrawable">@drawable/progress_bar_blue</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">18dip</item>
+        <item name="android:maxWidth">18dip</item>
+        <item name="android:minHeight">18dip</item>
+        <item name="android:maxHeight">18dip</item>
+    </style>
 
 </resources>

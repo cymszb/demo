@@ -17,7 +17,7 @@
     >
 
         <TextView
-                android:id="@+id/grid_item_value"
+                android:id="@+id/text_hb_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextStyleMedium"
@@ -60,7 +60,7 @@
 
 
         <ImageButton
-                android:id="@+id/grid_item_button"
+                android:id="@+id/btn_hb_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_pause_circle_outline_white_24px"

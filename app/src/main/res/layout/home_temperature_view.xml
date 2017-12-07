@@ -17,7 +17,7 @@
     >
 
         <TextView
-                android:id="@+id/grid_item_value"
+                android:id="@+id/text_temp_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextStyleMedium"
@@ -29,7 +29,6 @@
     </LinearLayout>
 
     <TextView
-            android:id="@+id/grid_item_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -60,7 +59,7 @@
 
 
         <ImageButton
-                android:id="@+id/grid_item_button"
+                android:id="@+id/btn_temp_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_pause_circle_outline_white_24px"

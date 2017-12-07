@@ -1,5 +1,7 @@
 package com.zglue.zgluesports;
 
+import com.zglue.zgluesports.bluetooth.BluetoothDataManager;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private PagerTabStrip mPageHeader;
     private BottomNavigationViewExtra mNavigation;
+    private BluetoothDataManager bdManager;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -110,8 +113,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-        });
 
+        });
+        bdManager = BluetoothDataManager.getInstance(this.getApplicationContext());
         //mTextMessage = (TextView) findViewById(R.id.message);
         mNavigation = (BottomNavigationViewExtra) findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -124,6 +128,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         getDefaultNetwork(this);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        bdManager.disconnect();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        bdManager.close();
     }
 
     @SuppressLint("NewApi")

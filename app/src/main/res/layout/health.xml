@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+    <LinearLayout android:id="@+id/activity_card_today"
+            android:layout_width="match_parent"
+            android:layout_height="192dp"
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:background="@drawable/background_steps_all">
+
+        <ImageView android:layout_width="202dp"
+                   android:layout_height="69dp"
+                   android:alpha="0.3"
+                   android:src="@mipmap/heart_rate_bk" />
+
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+    </FrameLayout>
+
+    <RelativeLayout android:id="@+id/card_weekly"
+        android:layout_width="match_parent"
+        android:layout_height="192dp"
+        android:padding="16dp"
+        android:background="@drawable/background_activity_weekly">
+
+        <ImageView android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:alpha="0.2"
+                   android:src="@mipmap/temp_bk1"/>
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

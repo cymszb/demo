@@ -65,11 +65,27 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center">
+
+            <TextView
+                    android:id="@+id/text_battery_percent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textAppearance="@style/TextStyleSmall"
+                    android:textColor="@android:color/black"
+                    android:textSize="8sp"
+                    android:background="@drawable/ic_battery_std_white_24px"
+            />
+
+            <!--
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:adjustViewBounds="true"
                 app:srcCompat="@drawable/ic_battery_std_white_24px"/>
+                -->
 
             <FrameLayout
                 android:layout_width="2dp"
@@ -79,11 +95,11 @@
 
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/text_model_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Model: BME3478"
+                android:text="No Device"
                 android:textAppearance="@style/TextStyleSmall"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
