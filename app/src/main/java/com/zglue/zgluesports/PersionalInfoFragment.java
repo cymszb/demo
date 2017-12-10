@@ -36,6 +36,11 @@ public class PersionalInfoFragment extends Fragment {
     public final static int DATA_TYPE_HEIGHT = 4;
     public final static int DATA_TYPE_WEIGHT = 5;
 
+    public final static int DATA_TYPE_TARGET_STEPS = 6;
+    public final static int DATA_TYPE_TARGET_WEIGHT = 7;
+    public final static int DATA_TYPE_TARGET_EX_TIME = 8;
+
+    final static String[] GENDER_LIST = {"Male","Female"};
 
     private View mFragmentView;
     private ListView mGoalList;
@@ -56,11 +61,11 @@ public class PersionalInfoFragment extends Fragment {
 
         mInfoList = (ListView)mFragmentView.findViewById(R.id.me_list_current);
         mInfoAdapter = new MeListAdapter();
-        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_NAME,R.drawable.circle_blue, "Name", mPersonalDataManager.getName(),true));
-        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_GENDER,R.drawable.circle_green, "Gender", mPersonalDataManager.getName(),true));
-        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_AGE,R.drawable.circle_orange, "Age", String.valueOf(mPersonalDataManager.getAge()),true));
-        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_HEIGHT,R.drawable.circle_pink, "Height", String.valueOf(mPersonalDataManager.getHeight()),true));
-        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_WEIGHT,R.drawable.circle_purple, "Weight",String.valueOf( mPersonalDataManager.getWeight()),true));
+        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_NAME,R.drawable.circle_blue, "Name", mPersonalDataManager.getName(),"",true));
+        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_GENDER,R.drawable.circle_green, "Gender", GENDER_LIST[mPersonalDataManager.getGender()],"",true));
+        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_AGE,R.drawable.circle_orange, "Age", String.valueOf(mPersonalDataManager.getAge()),"",true));
+        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_HEIGHT,R.drawable.circle_pink, "Height", String.valueOf(mPersonalDataManager.getHeight())," cm",true));
+        mInfoAdapter.addEntity(new MeEntity(DATA_TYPE_WEIGHT,R.drawable.circle_purple, "Weight",String.valueOf( mPersonalDataManager.getWeight())," kg",true));
         mInfoList.setAdapter(mInfoAdapter);
         mInfoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,9 +76,9 @@ public class PersionalInfoFragment extends Fragment {
 
         mGoalList = (ListView)mFragmentView.findViewById(R.id.me_list_goal);
         mGoalAdapter = new MeListAdapter();
-        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_NAME,R.drawable.circle_blue, "Target Daily Steps", "0",true));
-        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_NAME,R.drawable.circle_green, "Target Weight", "0 kg",true));
-        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_NAME,R.drawable.circle_purple, "Exercise time", "0 hours",true));
+        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_TARGET_STEPS,R.drawable.circle_blue, "Target Daily Steps", String.valueOf(mPersonalDataManager.getTargetSteps()),"",true));
+        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_TARGET_WEIGHT,R.drawable.circle_green, "Target Weight", String.valueOf(mPersonalDataManager.getTargetWeight())," kg",true));
+        mGoalAdapter.addEntity(new MeEntity(DATA_TYPE_TARGET_EX_TIME,R.drawable.circle_purple, "Exercise time", String.valueOf(mPersonalDataManager.getExerciseTime())," hours",true));
         mGoalList.setAdapter(mGoalAdapter);
 
         mGoalList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -126,7 +131,7 @@ public class PersionalInfoFragment extends Fragment {
             if(holder != null) {
                 MeEntity entity = MeEntities.get(position);
                 holder.title.setText(entity.title);
-                holder.value.setText(entity.value);
+                holder.value.setText(entity.value + entity.unit);
                 holder.avatar.setImageDrawable(getResources().getDrawable(entity.avatar_res_id));
 
                 holder.arrow.setVisibility(entity.canEdit? View.VISIBLE : View.INVISIBLE);
@@ -138,49 +143,79 @@ public class PersionalInfoFragment extends Fragment {
         }
     }
 
+
     public void showEditDialog( final MeEntity entity){
 
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
         alertDialog.setTitle(entity.title.toUpperCase());
-
-        View dialog = LayoutInflater.from(getContext()).inflate(R.layout.me_edit_view,null);
-        final EditText text =(EditText) dialog.findViewById(R.id.edit_box);
-        text.setText(entity.value);
-        text.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
-        alertDialog.setView(dialog);
         alertDialog.setIcon(entity.avatar_res_id);
 
-        alertDialog.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (entity.type){
-                            case DATA_TYPE_AGE:
-                                mPersonalDataManager.setAge(Integer.valueOf(text.getText().toString()));
-                                break;
-                            case DATA_TYPE_NAME:
-                                mPersonalDataManager.setName(text.getText().toString());
-                                break;
-                            case DATA_TYPE_GENDER:
-                                mPersonalDataManager.setGender(PersonalDataManager.GENDER_MALE);
-                                break;
-                            case DATA_TYPE_HEIGHT:
-                                mPersonalDataManager.setHeight(Integer.valueOf(text.getText().toString()));
-                                break;
-                            case DATA_TYPE_WEIGHT:
-                                mPersonalDataManager.setWeight(Integer.valueOf(text.getText().toString()));
-                                break;
-                            default:
-                                break;
+        if(entity.type == DATA_TYPE_GENDER){
+            alertDialog.setSingleChoiceItems(GENDER_LIST, mPersonalDataManager.getGender(), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String select = GENDER_LIST[which];
+                    entity.value = select;
+                    mPersonalDataManager.setGender(which);
+                    dialog.cancel();
+                    mInfoAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }else{
+            View dialog = LayoutInflater.from(getContext()).inflate(R.layout.me_edit_view,null);
+            final EditText text =(EditText) dialog.findViewById(R.id.edit_box);
+            text.setText(entity.value);
+            if(entity.type == DATA_TYPE_NAME){
+                text.setInputType(EditorInfo.TYPE_CLASS_TEXT);
+            } else{
+                text.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+            }
+            alertDialog.setView(dialog);
+
+            alertDialog.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (entity.type){
+                                case DATA_TYPE_AGE:
+                                    mPersonalDataManager.setAge(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                case DATA_TYPE_NAME:
+                                    mPersonalDataManager.setName(text.getText().toString());
+                                    break;
+                                case DATA_TYPE_HEIGHT:
+                                    mPersonalDataManager.setHeight(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                case DATA_TYPE_WEIGHT:
+                                    mPersonalDataManager.setWeight(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                case DATA_TYPE_TARGET_STEPS:
+                                    mPersonalDataManager.setTargetSteps(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                case DATA_TYPE_TARGET_WEIGHT:
+                                    mPersonalDataManager.setTargetWeight(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                case DATA_TYPE_TARGET_EX_TIME:
+                                    mPersonalDataManager.setExerciseTime(Integer.valueOf(text.getText().toString()));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            //result = text.getText().toString();
+                            entity.value = text.getText().toString();
+
+                            dialog.cancel();
+                            mInfoAdapter.notifyDataSetChanged();
+
                         }
-                        //result = text.getText().toString();
-                        entity.value = text.getText().toString();
+                    });
+        }
 
-                        dialog.cancel();
-                        mInfoAdapter.notifyDataSetChanged();
 
-                    }
-                });
+
+
+
 
         alertDialog.setNegativeButton("CANCEL",
                 new DialogInterface.OnClickListener() {
@@ -207,14 +242,16 @@ public class PersionalInfoFragment extends Fragment {
         int avatar_res_id;
         String title;
         String value;
+        String unit;
         boolean canEdit;
 
-        public MeEntity(int tp, int a, String b, String c, boolean d){
+        public MeEntity(int tp, int a, String b, String c, String d, boolean e){
             type = tp;
             avatar_res_id = a;
             title = b;
             value = c;
-            canEdit = d;
+            unit = d;
+            canEdit = e;
         }
     }
 

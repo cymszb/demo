@@ -21,15 +21,25 @@ public class PersonalDataManager {
     public final static String KEY_HEIGHT = "user_height";
     public final static String KEY_WEIGHT = "user_weight";
 
+    public final static String KEY_TARGET_STEPS = "target_steps";
+    public final static String KEY_TARGET_WEIGHT = "target_weight";
+    public final static String KEY_EX_TIME = "target_ex_time";
+
 
     public final static int GENDER_MALE = 0;
     public final static int GENDER_FEMALE = 1;
 
+    //goals
     String mName;
     int mGender;
     int mAge;
     int mHeight;
     int mWeight;
+
+    //goals
+    int mTargetSteps;
+    int mTargetWeight;
+    int mExerciseTime;
 
     private Context mContext;
     private SharedPreferences mSharedPreferences;
@@ -117,45 +127,39 @@ public class PersonalDataManager {
         }
     }
 
-
-
+    //My information
+    public String getName(){
+        return mSharedPreferences.getString(KEY_NAME,"zGlue");
+    }
     public void setName(String name){
         mName = name;
         mSharedPreferences.edit().putString(KEY_NAME,name).apply();
 
         notifyNameEdited();
     }
-    public String getName(){
-        return mSharedPreferences.getString(KEY_NAME,"zGlue");
-    }
 
+    public int getGender(){return mSharedPreferences.getInt(KEY_GENDER,GENDER_MALE);}
     public void setGender(int gender){
         if(gender == GENDER_MALE || gender == GENDER_FEMALE){
             mGender = gender;
             mSharedPreferences.edit().putInt(KEY_GENDER,gender).apply();
-
-
-            //notifyGenderEdited();
-        }
-    }
-
-    public int getGender(){
-        return mSharedPreferences.getInt(KEY_GENDER,0);
-    }
-
-    public void setAge(int age){
-        if(age >= 0 && age <= 120) {
-            mAge = age;
-            mSharedPreferences.edit().putInt(KEY_AGE,age).apply();
-
-            //notifyAgeEdited();
         }
     }
 
     public int getAge(){
         return  mSharedPreferences.getInt(KEY_AGE,24);
     }
+    public void setAge(int age){
+        if(age >= 0 && age <= 120) {
+            mAge = age;
+            mSharedPreferences.edit().putInt(KEY_AGE,age).apply();
+        }
+    }
 
+
+    public int getHeight(){
+        return  mSharedPreferences.getInt(KEY_HEIGHT,178);
+    }
     public void setHeight(int height){
         if(height >= 0 && height<=300) {
             mHeight = height;
@@ -164,10 +168,9 @@ public class PersonalDataManager {
         }
     }
 
-    public int getHeight(){
-        return  mSharedPreferences.getInt(KEY_HEIGHT,178);
+    public int getWeight(){
+        return mSharedPreferences.getInt(KEY_WEIGHT,68);
     }
-
     public void setWeight(int weight){
         if(weight >= 0 && weight <= 500) {
             mWeight = weight;
@@ -176,8 +179,24 @@ public class PersonalDataManager {
         }
     }
 
-    public int getWeight(){
-        return mSharedPreferences.getInt(KEY_WEIGHT,68);
+    //My target
+    public int getTargetSteps(){return mSharedPreferences.getInt(KEY_TARGET_STEPS,12000);}
+    public void setTargetSteps(int steps){
+        mTargetSteps = steps;
+        mSharedPreferences.edit().putInt(KEY_TARGET_STEPS,steps).apply();
     }
+
+    public int getTargetWeight(){return mSharedPreferences.getInt(KEY_TARGET_WEIGHT,68);}
+    public void setTargetWeight(int weight){
+        mTargetWeight = weight;
+        mSharedPreferences.edit().putInt(KEY_TARGET_WEIGHT,weight).apply();
+    }
+
+    public int getExerciseTime(){return mSharedPreferences.getInt(KEY_EX_TIME,2);}
+    public void setExerciseTime(int time){
+        mExerciseTime = time;
+        mSharedPreferences.edit().putInt(KEY_EX_TIME,time).apply();
+    }
+
 
 }

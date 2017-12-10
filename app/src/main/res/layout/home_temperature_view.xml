@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextStyleMedium"
                 android:text="36.8"
+                android:maxLines="1"
                 android:textSize="64sp"
                 android:textColor="@color/color_white"/>
 

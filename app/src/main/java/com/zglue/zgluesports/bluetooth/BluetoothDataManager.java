@@ -545,12 +545,17 @@ public class BluetoothDataManager {
 
     private String getCharacteristicValue(BluetoothGattCharacteristic characteristic){
         final byte[] data = characteristic.getValue();
-        int tmp = 0;
+        int value = 0;
         float temperature = 0.0f;
         if (data != null && data.length > 0) {
             final StringBuilder stringBuilder = new StringBuilder();
-            //for(byte byteChar : data) {
+            for(byte byteChar : data) {
+                Log.e(TAG, "value: " + byteChar);
+                value = (byteChar & 0xff) | (value << 8);
+            }
+            stringBuilder.append(String.format("%d", value));
             //for(int i = data.length - 1; i >= 0; i--){
+            /*
             if(characteristic.getUuid().equals(UUID_TEMP_VALUE)) {
                 temperature = temperature  + (float) data[0] + (float) data[1]/10;
                 stringBuilder.append(String.format("%.1f", temperature));
@@ -561,6 +566,7 @@ public class BluetoothDataManager {
                 }
                 stringBuilder.append(String.format("%d", tmp));
             }
+            */
 
             return stringBuilder.toString();
         }else{
@@ -611,7 +617,7 @@ public class BluetoothDataManager {
     }
 
 
-    public void startHeartbeatInternal(boolean start){
+    private void startHeartbeatInternal(boolean start){
         if(isSupportHeartBeat()){
             /*write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -632,7 +638,7 @@ public class BluetoothDataManager {
     public void startSteps(boolean start) {
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_STEPS,start));
     }
-    public void startStepsInternal(boolean start){
+    private void startStepsInternal(boolean start){
         if(isSupportSteps()){
             /*write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -652,7 +658,7 @@ public class BluetoothDataManager {
     public void startTemperature(boolean start){
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_TEMP,start));
     }
-    public void startTemperatureInternal(boolean start){
+    private void startTemperatureInternal(boolean start){
         if(isSupportHeartBeat()){
             /* write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -678,7 +684,7 @@ public class BluetoothDataManager {
     public void startBattery(boolean start){
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_BATTERY,start));
     }
-    public void startBatteryInternal(boolean start){
+    private void startBatteryInternal(boolean start){
         if(isSupportBattary()){
             if(start)readCharacteristic(mBatteryValueCharacteristic);
             moment();

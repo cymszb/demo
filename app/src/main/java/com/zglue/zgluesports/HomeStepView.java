@@ -47,7 +47,7 @@ public class HomeStepView extends FrameLayout {
         btnStepStart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothDataManager.getInstance(getContext()).startLED1(isStarted = !isStarted/*!bdManager.isStepStarted()*/);
+                BluetoothDataManager.getInstance(getContext()).startSteps(isStarted = !isStarted/*!bdManager.isStepStarted()*/);
                 updateView();
             }
         });
