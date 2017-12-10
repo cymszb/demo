@@ -35,7 +35,8 @@
             android:nestedScrollingEnabled="true"
             android:textAppearance="@style/TextStyleSmall"
             android:text="°C"
-            android:textSize="12sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:textColor="@color/color_white"
     />
 

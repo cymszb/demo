@@ -19,4 +19,6 @@
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
 
+    <string name="default_user_name">zGlue</string>
+
 </resources>

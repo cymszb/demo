@@ -3,9 +3,12 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:useLevel="true"
     android:innerRadiusRatio="2.3"
-    android:shape="ring"
-    android:thickness="3.8sp">
-
-    <solid android:color = "@color/color_white"
+    android:shape="oval">
+<!--
+    <solid android:color = "@color/color_red"
         />
+        -->
+    <solid android:color = "@color/color_pink"
+    />
+
 </shape>

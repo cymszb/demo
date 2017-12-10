@@ -41,6 +41,9 @@ public class ZglueBluetoothAttributes {
     public final static String ATTR_VIBRATOR_AUTO_TURN_OFF  = "EDFEC62E-9910-0BAC-5241-D8BDA6932A0E".toLowerCase();
     public final static String ATTR_VIBRATOR_DURATION= "EDFEC62E-9910-0BAC-5241-D8BDA6932A0F".toLowerCase();
 
+    /*LED 1*/
 
+    public final static String ATTR_LED_ENABLE = "EDFEC62E-9910-0BAC-5241-D8BDA6932A01".toLowerCase();
+    public final static String ATTR_LED_RANGE  = "EDFEC62E-9910-0BAC-5241-D8BDA6932A04".toLowerCase();
 
 }

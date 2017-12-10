@@ -19,6 +19,7 @@ public class HomeHearBeatView extends FrameLayout {
     private TextView textHbValue;
     private ImageButton btnHbStart;
     private BluetoothDataManager bdManager;
+    private boolean isStarted = false;
     public HomeHearBeatView(Context context) {
         super(context);
         mContext = context;
@@ -38,6 +39,7 @@ public class HomeHearBeatView extends FrameLayout {
 
     private void init(AttributeSet attrs){
         bdManager = BluetoothDataManager.getInstance(mContext);
+        isStarted = bdManager.isHearBeatStarted();
         View view = LayoutInflater.from(mContext).inflate(R.layout.home_hear_beat_view,null);
         btnHbStart = (ImageButton)view.findViewById(R.id.btn_hb_start);
         textHbValue = (TextView)view.findViewById(R.id.text_hb_value);
@@ -46,7 +48,7 @@ public class HomeHearBeatView extends FrameLayout {
         btnHbStart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothDataManager.getInstance(getContext()).startHeartbeat(!bdManager.isHearBeatStarted());
+                BluetoothDataManager.getInstance(getContext()).startHeartbeat(isStarted = !isStarted/*bdManager.isHearBeatStarted()*/);
                 updateView();
             }
         });
@@ -55,15 +57,18 @@ public class HomeHearBeatView extends FrameLayout {
     }
 
     private void updateView(){
-        if(bdManager.isHearBeatStarted()){
+        if(isStarted/*bdManager.isHearBeatStarted()*/){
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
-            textHbValue.setText(bdManager.getTemprature());
+            textHbValue.setText(bdManager.getHeartBeat());
         }else{
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textHbValue.setText("0");
         }
     }
-
+    public void OnHeartBeatChanged(String rate){
+        isStarted = true;
+        updateView();
+    }
     public void setHeartBeat(String rate){
         textHbValue.setText(rate);
     }

@@ -10,6 +10,9 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -48,6 +51,9 @@ public class BluetoothDataManager {
     private BluetoothGattCharacteristic mVibratorEnableCharacteristic = null;
     private BluetoothGattCharacteristic mVibratorAutoTurnOffeCharacteristic = null;
     private BluetoothGattCharacteristic mVibratorDuaratuinCharacteristic = null;
+
+    private BluetoothGattCharacteristic mLEDEnableCharacteristic = null;
+    private BluetoothGattCharacteristic mLEDRangeCharacteristic = null;
 
     private String mModeName;
 
@@ -98,6 +104,8 @@ public class BluetoothDataManager {
     public final static UUID UUID_VIBRATOR_AUTO_TURN_OFF = UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_AUTO_TURN_OFF);
     public final static UUID UUID_VIBRATOR_DURATION= UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_DURATION);
 
+    public final static UUID UUID_LED_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_ENABLE);
+    public final static UUID UUID_LED_RANGE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_RANGE);
 
     private  BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -183,6 +191,23 @@ public class BluetoothDataManager {
         }
     };
 
+    /* CMD type*/
+    public final static int TYPE_START_HB = 0;
+    public final static int TYPE_START_BATTERY = 1;
+    public final static int TYPE_START_STEPS = 2;
+    public final static int TYPE_START_TEMP = 3;
+    public final static int TYPE_START_VIBERATE = 4;
+    public final static int TYPE_START_LED1 = 5;
+
+    public final static int STOP = 0;
+    public final static int START = 1;
+
+
+    HandlerThread mBlueToothThread = new HandlerThread("BluetoothCmd");
+
+
+    Handler mBlueToothThreadHandler ;
+
     private static BluetoothDataManager mInstance = null;
 
     private BluetoothDataManager(Context context){
@@ -216,7 +241,42 @@ public class BluetoothDataManager {
             return false;
         }
 
+        mBlueToothThread.start();
+        mBlueToothThreadHandler = new Handler(mBlueToothThread.getLooper()){
+            @Override
+            public void handleMessage (Message msg){
+                switch (msg.what){
+                    case TYPE_START_HB:
+                        startHeartbeatInternal((boolean)msg.obj);
+                        break;
+                    case TYPE_START_BATTERY:
+                        startBatteryInternal((boolean)msg.obj);
+                        break;
+                    case TYPE_START_STEPS:
+                        startStepsInternal((boolean)msg.obj);
+                        break;
+                    case TYPE_START_TEMP:
+                        startTemperatureInternal((boolean)msg.obj);
+                        break;
+                    case TYPE_START_VIBERATE:
+                        startViberateInternal((boolean)msg.obj);
+                        break;
+                    case TYPE_START_LED1:
+                        startLED1Internal((boolean)msg.obj);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        };
+
         return true;
+    }
+
+    public void destroy(){
+        mBlueToothThread.quitSafely();
+        close();
     }
 
 
@@ -236,12 +296,16 @@ public class BluetoothDataManager {
         mBatteryTimCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_TIM);
         mBatteryChargeRateCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_CHARGE_RATE);
 
-        mVibratorEnableCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_ENABLE);
-        mVibratorAutoTurnOffeCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_AUTO_TURN_OFF);
-        mVibratorDuaratuinCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_DURATION);
+        mVibratorEnableCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_ENABLE);
+        mVibratorAutoTurnOffeCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_AUTO_TURN_OFF);
+        mVibratorDuaratuinCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_DURATION);
+
+        mLEDEnableCharacteristic = findCharacteristic(mServiceA,UUID_LED_ENABLE);
+        mLEDRangeCharacteristic = findCharacteristic(mServiceA,UUID_LED_RANGE);
 
         startBattery(true);
-        startSteps(true);
+
+       // startSteps(true);
 
 
     }
@@ -279,6 +343,10 @@ public class BluetoothDataManager {
     }
     public boolean isSupportVibratorFullFeature(){
         return isSupportVibrator() && mVibratorAutoTurnOffeCharacteristic != null && mVibratorDuaratuinCharacteristic != null;
+    }
+
+    public boolean isSupportLED1(){
+        return isDeviceAvailable() && mLEDRangeCharacteristic != null && mLEDEnableCharacteristic != null;
     }
 
 
@@ -356,6 +424,7 @@ public class BluetoothDataManager {
      *         {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
      *         callback.
      */
+
     public boolean connect(final String address) {
         if (mBluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
@@ -476,10 +545,23 @@ public class BluetoothDataManager {
 
     private String getCharacteristicValue(BluetoothGattCharacteristic characteristic){
         final byte[] data = characteristic.getValue();
+        int tmp = 0;
+        float temperature = 0.0f;
         if (data != null && data.length > 0) {
-            final StringBuilder stringBuilder = new StringBuilder(data.length);
-            for(byte byteChar : data)
-                stringBuilder.append(String.format("%d ", byteChar));
+            final StringBuilder stringBuilder = new StringBuilder();
+            //for(byte byteChar : data) {
+            //for(int i = data.length - 1; i >= 0; i--){
+            if(characteristic.getUuid().equals(UUID_TEMP_VALUE)) {
+                temperature = temperature  + (float) data[0] + (float) data[1]/10;
+                stringBuilder.append(String.format("%.1f", temperature));
+            }else{
+                for (int i = 0; i < data.length; i++) {
+                    Log.e(TAG, "value: " + data[i]);
+                    tmp = ((data[i] & 0xff) | (tmp << 8));
+                }
+                stringBuilder.append(String.format("%d", tmp));
+            }
+
             return stringBuilder.toString();
         }else{
             return new String("0");
@@ -487,8 +569,49 @@ public class BluetoothDataManager {
 
     }
 
+    public void startLED1(boolean start){
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_LED1,start));
+    }
+
+    public void startLED1Internal(boolean start){
+        if(isSupportLED1()){
+            /*write enable*/
+            byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
+            mLEDRangeCharacteristic.setValue(values_write);
+            mBluetoothGatt.writeCharacteristic(mLEDRangeCharacteristic);
+
+            moment();
+            mLEDEnableCharacteristic.setValue(values_write);
+            mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
+
+        }else{
+            Log.e(TAG,"Not support led.");
+        }
+    }
+
+    public void startViberate(boolean start){
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_VIBERATE,start));
+    }
+
+    public void startViberateInternal(boolean start){
+        if(isSupportVibrator()){
+            /*write enable*/
+            byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
+            mVibratorEnableCharacteristic.setValue(values_write);
+            mBluetoothGatt.writeCharacteristic(mVibratorEnableCharacteristic);
+        }
+    }
+
+
     public boolean isHearBeatStarted(){return isHearBeatStarted;}
+
+
     public void startHeartbeat(boolean start){
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_HB,start));
+    }
+
+
+    public void startHeartbeatInternal(boolean start){
         if(isSupportHeartBeat()){
             /*write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -505,7 +628,11 @@ public class BluetoothDataManager {
     }
 
     public boolean isStepStarted(){return isStepStarted;}
-    public void startSteps(boolean start){
+
+    public void startSteps(boolean start) {
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_STEPS,start));
+    }
+    public void startStepsInternal(boolean start){
         if(isSupportSteps()){
             /*write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -521,7 +648,11 @@ public class BluetoothDataManager {
     }
 
     public boolean isTempStarted(){return isTempStarted;}
+
     public void startTemperature(boolean start){
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_TEMP,start));
+    }
+    public void startTemperatureInternal(boolean start){
         if(isSupportHeartBeat()){
             /* write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
@@ -543,7 +674,11 @@ public class BluetoothDataManager {
     }
 
     public boolean isBatteryStarted(){return isBatteryStarted;}
+
     public void startBattery(boolean start){
+        mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_BATTERY,start));
+    }
+    public void startBatteryInternal(boolean start){
         if(isSupportBattary()){
             if(start)readCharacteristic(mBatteryValueCharacteristic);
             moment();
@@ -558,6 +693,7 @@ public class BluetoothDataManager {
 
 
     public String getHeartBeat(){
+        if(mHeartBeat == null)return new String("0");
         return mHeartBeat;
         /*
         if (mHeartBeat > 150){
@@ -571,6 +707,7 @@ public class BluetoothDataManager {
     }
 
     public String getDailySteps(){
+        if(mSteps == null)return new String("0");
         return mSteps;
         /*
         if (mSteps > 50000){
@@ -583,6 +720,7 @@ public class BluetoothDataManager {
     }
 
     public String getTemprature(){
+        if(mTemperature == null)return new String("0");
         return mTemperature;
         /*
         if(mTemperature > 42){
@@ -596,6 +734,7 @@ public class BluetoothDataManager {
     }
 
     public String getBatteryPercent(){
+        if(mBatteryPercent == null)return new String("0");
         return mBatteryPercent;
         /*
         if(mBatteryPercent < 0){

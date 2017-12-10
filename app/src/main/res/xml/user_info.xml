@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <Preference
+                android:key="user_age"
+                android:defaultValue="24"/>
+
+        <Preference
+                android:key="user_gender"
+                android:defaultValue="1" />
+
+        <Preference
+                android:key="user_name"
+                android:defaultValue="@string/default_user_name" />
+
+        <Preference
+                android:key="user_height"
+                android:defaultValue="178"
+        />
+
+        <Preference
+            android:key="user_weight"
+            android:defaultValue="68"
+            />
+
+
+
+</PreferenceScreen>

@@ -21,6 +21,7 @@ public class HomeTemperatureView extends FrameLayout {
     private TextView textTempValue;
     private ImageButton btnTempStart;
     private BluetoothDataManager bdManager;
+    private boolean isStarted = false;
     public HomeTemperatureView(Context context) {
         super(context);
         mContext = context;
@@ -40,6 +41,7 @@ public class HomeTemperatureView extends FrameLayout {
 
     private void init(AttributeSet attrs){
         bdManager = BluetoothDataManager.getInstance(mContext);
+        isStarted = bdManager.isTempStarted();
         View view = LayoutInflater.from(mContext).inflate(R.layout.home_temperature_view,null);
         btnTempStart = (ImageButton)view.findViewById(R.id.btn_temp_start);
         textTempValue = (TextView)view.findViewById(R.id.text_temp_value);
@@ -48,7 +50,7 @@ public class HomeTemperatureView extends FrameLayout {
         btnTempStart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothDataManager.getInstance(getContext()).startTemperature(!bdManager.isTempStarted());
+                BluetoothDataManager.getInstance(getContext()).startTemperature(isStarted = !isStarted/*!bdManager.isTempStarted()*/);
                 updateView();
             }
         });
@@ -57,7 +59,7 @@ public class HomeTemperatureView extends FrameLayout {
     }
 
     private void updateView(){
-        if(bdManager.isTempStarted()){
+        if(isStarted/*bdManager.isTempStarted()*/){
             btnTempStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
             textTempValue.setText(bdManager.getTemprature());
         }else{
@@ -65,6 +67,11 @@ public class HomeTemperatureView extends FrameLayout {
             textTempValue.setText("0");
         }
     }
+    public void OnTempChanged(String temp){
+        isStarted = true;
+        updateView();
+    }
+
 
     public void setTempereature(String temp){
         textTempValue.setText(temp);

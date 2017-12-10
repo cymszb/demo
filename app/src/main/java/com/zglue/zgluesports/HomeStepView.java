@@ -19,6 +19,7 @@ public class HomeStepView extends FrameLayout {
     private TextView textStepValue;
     private ImageButton btnStepStart;
     private BluetoothDataManager bdManager;
+    private boolean isStarted = false;
     public HomeStepView(Context context) {
         super(context);
         mContext = context;
@@ -38,6 +39,7 @@ public class HomeStepView extends FrameLayout {
 
     private void init(AttributeSet attrs){
         bdManager = BluetoothDataManager.getInstance(mContext);
+        isStarted = bdManager.isStepStarted();
         View view = LayoutInflater.from(mContext).inflate(R.layout.home_step_view,null);
         btnStepStart = (ImageButton)view.findViewById(R.id.btn_step_start);
         textStepValue = (TextView)view.findViewById(R.id.text_step_value);
@@ -45,7 +47,7 @@ public class HomeStepView extends FrameLayout {
         btnStepStart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothDataManager.getInstance(getContext()).startSteps(!bdManager.isStepStarted());
+                BluetoothDataManager.getInstance(getContext()).startLED1(isStarted = !isStarted/*!bdManager.isStepStarted()*/);
                 updateView();
             }
         });
@@ -54,13 +56,18 @@ public class HomeStepView extends FrameLayout {
     }
 
     private void updateView(){
-        if(bdManager.isStepStarted()){
+        if(isStarted/*bdManager.isStepStarted()*/){
             btnStepStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
             textStepValue.setText(bdManager.getDailySteps());
         }else{
             btnStepStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textStepValue.setText("0");
         }
+    }
+
+    public void OnStepChanged(String steps){
+        isStarted = true;
+        updateView();
     }
 
     public void setSteps(String steps){

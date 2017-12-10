@@ -37,7 +37,8 @@
             android:nestedScrollingEnabled="true"
             android:textAppearance="@style/TextStyleSmall"
             android:text="Steps"
-            android:textSize="12sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:textColor="@color/color_white"
     />
 

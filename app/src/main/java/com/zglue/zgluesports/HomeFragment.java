@@ -122,16 +122,16 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((HomeHearBeatView)mContent.getChildAt(0)).setHeartBeat(rate);
+                ((HomeHearBeatView)mContent.getChildAt(0)).OnHeartBeatChanged(rate); //setHeartBeat(rate);
             }
         });
     }
     public void OnStepsChanged(final String steps){
-        Log.e(TAG,"OnStepsChanged,temperature:" + steps);
+        Log.e(TAG,"OnStepsChanged,steps:" + steps);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((HomeStepView)mContent.getChildAt(2)).setSteps(steps);
+                ((HomeStepView)mContent.getChildAt(2)).OnStepChanged(steps); //setSteps(steps);
             }
         });
     }
@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((HomeTemperatureView)mContent.getChildAt(3)).setTempereature(temperature);
+                ((HomeTemperatureView)mContent.getChildAt(3)).OnTempChanged(temperature); //setTempereature(temperature);
             }
         });
     }

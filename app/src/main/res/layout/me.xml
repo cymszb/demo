@@ -6,27 +6,20 @@
     android:padding="5dp">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_height="192dp"
+        android:gravity="center"
         android:orientation="vertical"
-        android:background="@color/color_blue">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_me"
-            android:textColor="@android:color/white"
-            android:layout_margin="20dp"
-            android:textAppearance="@style/TextStyleTitle"/>
+        android:background="@drawable/background_me">
 
         <com.zglue.zgluesports.widget.CircleImageView
                 xmlns:imagecontrol="http://schemas.android.com/apk/res-auto"
-                android:layout_width="128dp"
-                android:layout_height="128dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:src="@mipmap/teacher"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                android:layout_marginTop="2dp"
-                android:layout_marginStart="2dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 imagecontrol:border_inside_color="#fff7f2e9"
                 imagecontrol:border_outside_color="#ffd5d1c8"
                 imagecontrol:border_thickness="1dp"
@@ -35,13 +28,106 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Levin Li"
-            android:layout_margin="20dp"
+            android:text="Zglue"
+            android:layout_margin="5dp"
             android:textColor="@android:color/white"
-            android:textAppearance="@style/TextStyleMedium"/>
+            android:textAppearance="@style/TextStyleTitle"
+        android:visibility="gone"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:text="Age"
+                    android:textAppearance="@style/TextStyleSmall"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+            />
+            <TextView
+                    android:id="@+id/age_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="8dp"
+                    android:text="22"
+                    android:textAppearance="@style/TextStyleSmall"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+            />
+
+
+            <FrameLayout
+                    android:layout_width="2dp"
+                    android:layout_height="24dp"
+                    android:background="@color/color_white"
+            />
+
+
+            <TextView
+                    android:id="@+id/text_model_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Male"
+                    android:textAppearance="@style/TextStyleSmall"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+            />
+
+
+        </LinearLayout>
 
     </LinearLayout>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextStyleTitle"
+                android:text="My info"
+                android:textSize="18sp"
+                android:layout_margin="8dp"
+                android:textStyle="bold"/>
+        <ListView
+                android:id="@+id/me_list_current"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextStyleTitle"
+                android:text="My goal"
+                android:textSize="18sp"
+                android:layout_margin="8dp"
+                android:textStyle="bold"/>
+        <ListView
+                android:id="@+id/me_list_goal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
 
 
 </LinearLayout>
