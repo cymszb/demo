@@ -17,6 +17,8 @@
 
 
     <TextView
+            android:id="@+id/progress_bar_steps"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -29,7 +31,8 @@
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="12dp"
+            android:padding="2dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
@@ -41,20 +44,22 @@
                 android:textAppearance="@style/TextStyleSmall"
                 android:textColor="@color/color_white"
                 android:text="TARGET"
-                android:textSize="8sp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="2dp"
                 />
-        <FrameLayout android:layout_width="4dp"
-                     android:layout_height="match_parent">
-
-        </FrameLayout>
 
         <TextView
+                android:id="@+id/progress_bar_target"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextStyleSmall"
                 android:textColor="@color/color_white"
                 android:text="10000"
                 android:textSize="12sp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="3dp"
         />
 
 

@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         mNavigation = (BottomNavigationViewExtra) findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        /*
         ArrayList<String> ips = getIpv4Addresses();
         Log.e("Demo","Current active network: " + isConnect(this) + "; interface: " + activeNetwork(this));
         Log.e("Demo","Interface info: " + ips.size() );
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         getDefaultNetwork(this);
+        */
     }
 
     @Override

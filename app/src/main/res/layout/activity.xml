@@ -67,6 +67,7 @@
 
 
                 <TextView
+                        android:id="@+id/activity_calories"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextStyleNumber"
@@ -76,14 +77,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Calories"
+                    android:text="K-Calories"
                     android:textAppearance="@style/TextStyleDescription"
                     android:textColor="@color/color_white" />
 
             </LinearLayout>
 
             <ImageView
-                    android:layout_width="1dp"
+                    android:layout_width="2dp"
                     android:layout_height="match_parent"
                     android:background="@color/color_divider"
                     android:layout_marginTop="5dp"
@@ -91,7 +92,6 @@
                     tools:ignore="contentDescription"/>
 
             <LinearLayout
-                    android:id="@+id/id_total_mills"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -100,6 +100,7 @@
 
 
                 <TextView
+                        android:id="@+id/activity_fat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextStyleNumber"
@@ -116,7 +117,7 @@
             </LinearLayout>
 
             <ImageView
-                    android:layout_width="1dp"
+                    android:layout_width="2dp"
                     android:layout_height="match_parent"
                     android:background="@color/color_divider"
                     android:layout_marginTop="5dp"
@@ -133,6 +134,7 @@
 
 
                 <TextView
+                        android:id="@+id/activity_distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextStyleNumber"
@@ -142,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kilometers"
+                    android:text="Distance"
                     android:textAppearance="@style/TextStyleDescription"
                     android:textColor="@color/color_white" />
 

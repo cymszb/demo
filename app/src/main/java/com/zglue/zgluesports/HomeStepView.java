@@ -58,14 +58,14 @@ public class HomeStepView extends FrameLayout {
     private void updateView(){
         if(isStarted/*bdManager.isStepStarted()*/){
             btnStepStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
-            textStepValue.setText(bdManager.getDailySteps());
+            textStepValue.setText(String.valueOf(bdManager.getDailySteps()));
         }else{
             btnStepStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textStepValue.setText("0");
         }
     }
 
-    public void OnStepChanged(String steps){
+    public void OnStepChanged(int steps){
         isStarted = true;
         updateView();
     }

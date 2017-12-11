@@ -59,13 +59,13 @@ public class HomeHearBeatView extends FrameLayout {
     private void updateView(){
         if(isStarted/*bdManager.isHearBeatStarted()*/){
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
-            textHbValue.setText(bdManager.getHeartBeat());
+            textHbValue.setText(String.valueOf(bdManager.getHeartBeat()));
         }else{
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textHbValue.setText("0");
         }
     }
-    public void OnHeartBeatChanged(String rate){
+    public void OnHeartBeatChanged(int rate){
         isStarted = true;
         updateView();
     }

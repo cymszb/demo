@@ -54,7 +54,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         textModelName = (TextView) mFragmentView.findViewById(R.id.text_model_name);
         textBatteryPercent = (TextView) mFragmentView.findViewById(R.id.text_battery_percent);
         textModelName.setText(bdManager.getModelName()!=null?bdManager.getModelName():"No Device");
-        textBatteryPercent.setText(bdManager.getBatteryPercent()!=null?bdManager.getBatteryPercent():"0");
+        textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent()));
         initPairButton(mPairBtn);
         mContent = (GridView) mFragmentView.findViewById(R.id.content_grid);
         HomeAdapter adapter = new HomeAdapter(this.getContext());
@@ -117,39 +117,54 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         });
     }
     @Override
-    public void OnHeartBeatChanged(final String rate){
+    public void OnHeartBeatChanged(final int rate){
         Log.e(TAG,"OnHeartBeatChanged,rate:" + rate);
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(!isAdded()){
+                    return;
+                }
                 ((HomeHearBeatView)mContent.getChildAt(0)).OnHeartBeatChanged(rate); //setHeartBeat(rate);
             }
         });
     }
-    public void OnStepsChanged(final String steps){
+    public void OnStepsChanged(final int steps){
         Log.e(TAG,"OnStepsChanged,steps:" + steps);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(!isAdded()){
+                    return;
+                }
                 ((HomeStepView)mContent.getChildAt(2)).OnStepChanged(steps); //setSteps(steps);
             }
         });
     }
-    public void OnTemperatureChanged(final String temperature){
+    public void OnTemperatureChanged(final int temperature){
         Log.e(TAG,"OnTemperatureChanged,temperature:" + temperature);
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(!isAdded()){
+                    return;
+                }
                 ((HomeTemperatureView)mContent.getChildAt(3)).OnTempChanged(temperature); //setTempereature(temperature);
             }
         });
     }
-    public void OnBatteryChanged(final String percent){
+    public void OnBatteryChanged(final int percent){
         Log.e(TAG,"OnBatteryChanged,percent:" + percent);
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                textBatteryPercent.setText(percent);
+                if(!isAdded()){
+                    return;
+                }
+                textBatteryPercent.setText(String.valueOf(percent));
             }
         });
     }

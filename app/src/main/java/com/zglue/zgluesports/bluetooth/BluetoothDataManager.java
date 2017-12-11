@@ -32,6 +32,8 @@ public class BluetoothDataManager {
     private String mBluetoothDeviceAddress;
     private BluetoothGatt mBluetoothGatt;
 
+    private RecordDatabase mRecordDb;
+
     /*Service and Chars*/
     private BluetoothGattService mServiceA = null;
     private BluetoothGattService mServiceB = null;
@@ -61,11 +63,16 @@ public class BluetoothDataManager {
     private boolean isTempStarted = false;
     private boolean isStepStarted = false;
     private boolean isBatteryStarted = false;
-
+/*
     private String mHeartBeat;
     private String mSteps;
     private String mTemperature ;
     private String mBatteryPercent;
+*/
+    private int mHeartBeat = 0;
+    private int mSteps = 0;
+    private int mTemperature = 0;
+    private int mBatteryPercent = 0;
 
     private int mConnectionState = STATE_DISCONNECTED;
 
@@ -76,36 +83,36 @@ public class BluetoothDataManager {
     private ArrayList<DataChangedListener> mDataChangedListeners = new ArrayList<>();
     private ArrayList<ConnectionListener> mConnectionListeners = new ArrayList<>();
 
-    public final static UUID UUID_CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR =
+    private final static UUID UUID_CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR =
             UUID.fromString(ZglueBluetoothAttributes.ATTR_CHARACTERISTIC_UPDATE_NOTIFICATION_DESCRIPTOR);
 
-    public final static UUID UUID_MANUFACTURE_NAME =
+    private final static UUID UUID_MANUFACTURE_NAME =
             UUID.fromString(ZglueBluetoothAttributes.ATTR_MANUFACTURE_NAME);
 
-    public final static UUID UUID_SERVICE_B = UUID.fromString(ZglueBluetoothAttributes.SERVICE_B);
+    private final static UUID UUID_SERVICE_B = UUID.fromString(ZglueBluetoothAttributes.SERVICE_B);
 
-    public final static UUID UUID_TEMP_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_TEMP_ENABLE);
-    public final static UUID UUID_TEMP_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_TEMP_VALUE);
+    private final static UUID UUID_TEMP_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_TEMP_ENABLE);
+    private final static UUID UUID_TEMP_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_TEMP_VALUE);
 
-    public final static UUID UUID_HEART_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_HEART_ENABLE);
-    public final static UUID UUID_HEART_VALUE= UUID.fromString(ZglueBluetoothAttributes.ATTR_HEART_VALUE);
+    private final static UUID UUID_HEART_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_HEART_ENABLE);
+    private final static UUID UUID_HEART_VALUE= UUID.fromString(ZglueBluetoothAttributes.ATTR_HEART_VALUE);
 
-    public final static UUID UUID_STEPS_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_ENABLE);
-    public final static UUID UUID_STEPS_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_VALUE);
-    public final static UUID UUID_STEPS_FEATURE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_FEATURE);
+    private final static UUID UUID_STEPS_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_ENABLE);
+    private final static UUID UUID_STEPS_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_VALUE);
+    private final static UUID UUID_STEPS_FEATURE = UUID.fromString(ZglueBluetoothAttributes.ATTR_STEPS_FEATURE);
 
-    public final static UUID UUID_BETTARY_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_VALUE);
-    public final static UUID UUID_BETTARY_TIM = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_TIM);
-    public final static UUID UUID_BETTARY_CHARGE_RATE = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_CHARGE_RATE);
+    private final static UUID UUID_BETTARY_VALUE = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_VALUE);
+    private final static UUID UUID_BETTARY_TIM = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_TIM);
+    private final static UUID UUID_BETTARY_CHARGE_RATE = UUID.fromString(ZglueBluetoothAttributes.ATTR_BETTARY_CHARGE_RATE);
 
-    public final static UUID UUID_SERVICE_A = UUID.fromString(ZglueBluetoothAttributes.SERVICE_A);
+    private final static UUID UUID_SERVICE_A = UUID.fromString(ZglueBluetoothAttributes.SERVICE_A);
 
-    public final static UUID UUID_VIBRATOR_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_ENABLE);
-    public final static UUID UUID_VIBRATOR_AUTO_TURN_OFF = UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_AUTO_TURN_OFF);
-    public final static UUID UUID_VIBRATOR_DURATION= UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_DURATION);
+    private final static UUID UUID_VIBRATOR_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_ENABLE);
+    private final static UUID UUID_VIBRATOR_AUTO_TURN_OFF = UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_AUTO_TURN_OFF);
+    private final static UUID UUID_VIBRATOR_DURATION= UUID.fromString(ZglueBluetoothAttributes.ATTR_VIBRATOR_DURATION);
 
-    public final static UUID UUID_LED_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_ENABLE);
-    public final static UUID UUID_LED_RANGE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_RANGE);
+    private final static UUID UUID_LED_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_ENABLE);
+    private final static UUID UUID_LED_RANGE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_RANGE);
 
     private  BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -148,7 +155,7 @@ public class BluetoothDataManager {
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
 
-            String value = getCharacteristicValue(characteristic);
+            int value = Integer.valueOf(getCharacteristicValue(characteristic));
             Log.d(TAG,"onCharacteristicRead, characteristic:" + characteristic.getUuid().toString()
             + ";value: " + value);
 
@@ -171,7 +178,7 @@ public class BluetoothDataManager {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            String value = getCharacteristicValue(characteristic);
+            int value = Integer.valueOf(getCharacteristicValue(characteristic));
             Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
                     + ";value: " + value);
 
@@ -192,12 +199,12 @@ public class BluetoothDataManager {
     };
 
     /* CMD type*/
-    public final static int TYPE_START_HB = 0;
-    public final static int TYPE_START_BATTERY = 1;
-    public final static int TYPE_START_STEPS = 2;
-    public final static int TYPE_START_TEMP = 3;
-    public final static int TYPE_START_VIBERATE = 4;
-    public final static int TYPE_START_LED1 = 5;
+    private final static int TYPE_START_HB = 0;
+    private final static int TYPE_START_BATTERY = 1;
+    private final static int TYPE_START_STEPS = 2;
+    private final static int TYPE_START_TEMP = 3;
+    private final static int TYPE_START_VIBERATE = 4;
+    private final static int TYPE_START_LED1 = 5;
 
     public final static int STOP = 0;
     public final static int START = 1;
@@ -224,7 +231,9 @@ public class BluetoothDataManager {
     }
 
     /* Need be called before use */
-    public boolean initialise(Context context){
+    private boolean initialise(Context context){
+
+        mRecordDb = RecordDatabase.getInstance(context);
         // For API level 18 and above, get a reference to BluetoothAdapter through
         // BluetoothManager.
         if (mBluetoothManager == null) {
@@ -281,7 +290,7 @@ public class BluetoothDataManager {
 
 
 
-    public void initDataChannel(){
+    private void initDataChannel(){
         mServiceA = findService(UUID_SERVICE_A);
         mServiceB = findService(UUID_SERVICE_B);
         mHearBeatEnableCharacteristic = findCharacteristic(mServiceB,UUID_HEART_ENABLE);
@@ -382,7 +391,7 @@ public class BluetoothDataManager {
         }
     }
 
-    private void notifyHeartBeatChanged(String rate){
+    private void notifyHeartBeatChanged(int rate){
         if(mDataChangedListeners!=null){
             for(int i=0;i<mDataChangedListeners.size();i++){
                 mDataChangedListeners.get(i).OnHeartBeatChanged(rate);
@@ -390,7 +399,7 @@ public class BluetoothDataManager {
         }
     }
 
-    private void notifyStepsChanged(String steps){
+    private void notifyStepsChanged(int steps){
         if(mDataChangedListeners!=null){
             for(int i=0;i<mDataChangedListeners.size();i++){
                 mDataChangedListeners.get(i).OnStepsChanged(steps);
@@ -398,7 +407,7 @@ public class BluetoothDataManager {
         }
     }
 
-    private void notifyTemperatureChanged(String temperature){
+    private void notifyTemperatureChanged(int temperature){
         if(mDataChangedListeners!=null){
             for(int i=0;i<mDataChangedListeners.size();i++){
                 mDataChangedListeners.get(i).OnTemperatureChanged(temperature);
@@ -406,7 +415,7 @@ public class BluetoothDataManager {
         }
     }
 
-    private void notifyBatteryChanged(String percent){
+    private void notifyBatteryChanged(int percent){
         if(mDataChangedListeners!=null){
             for(int i=0;i<mDataChangedListeners.size();i++){
                 mDataChangedListeners.get(i).OnBatteryChanged(percent);
@@ -548,25 +557,29 @@ public class BluetoothDataManager {
         int value = 0;
         float temperature = 0.0f;
         if (data != null && data.length > 0) {
+
             final StringBuilder stringBuilder = new StringBuilder();
-            for(byte byteChar : data) {
-                Log.e(TAG, "value: " + byteChar);
-                value = (byteChar & 0xff) | (value << 8);
+            //for(byte byteChar : data) {
+            /*
+            for(int i = data.length - 1; i >= 0; i--){
+                Log.e(TAG, "value: " + data[i]);
+                value = (data[i] & 0xff) | (value << 8);
             }
             stringBuilder.append(String.format("%d", value));
+            */
             //for(int i = data.length - 1; i >= 0; i--){
-            /*
+
             if(characteristic.getUuid().equals(UUID_TEMP_VALUE)) {
                 temperature = temperature  + (float) data[0] + (float) data[1]/10;
                 stringBuilder.append(String.format("%.1f", temperature));
             }else{
                 for (int i = 0; i < data.length; i++) {
                     Log.e(TAG, "value: " + data[i]);
-                    tmp = ((data[i] & 0xff) | (tmp << 8));
+                    value = ((data[i] & 0xff) | (value << 8));
                 }
-                stringBuilder.append(String.format("%d", tmp));
+                stringBuilder.append(String.format("%d", value));
             }
-            */
+
 
             return stringBuilder.toString();
         }else{
@@ -698,8 +711,8 @@ public class BluetoothDataManager {
     }
 
 
-    public String getHeartBeat(){
-        if(mHeartBeat == null)return new String("0");
+    public int getHeartBeat(){
+        //if(mHeartBeat == null)return new String("0");
         return mHeartBeat;
         /*
         if (mHeartBeat > 150){
@@ -712,8 +725,8 @@ public class BluetoothDataManager {
         */
     }
 
-    public String getDailySteps(){
-        if(mSteps == null)return new String("0");
+    public int getDailySteps(){
+        //if(mSteps == null)return new String("0");
         return mSteps;
         /*
         if (mSteps > 50000){
@@ -725,8 +738,8 @@ public class BluetoothDataManager {
         }*/
     }
 
-    public String getTemprature(){
-        if(mTemperature == null)return new String("0");
+    public int getTemprature(){
+        //if(mTemperature == null)return new String("0");
         return mTemperature;
         /*
         if(mTemperature > 42){
@@ -739,8 +752,8 @@ public class BluetoothDataManager {
         */
     }
 
-    public String getBatteryPercent(){
-        if(mBatteryPercent == null)return new String("0");
+    public int getBatteryPercent(){
+        //if(mBatteryPercent == null)return new String("0");
         return mBatteryPercent;
         /*
         if(mBatteryPercent < 0){
