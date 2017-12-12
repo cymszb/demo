@@ -7,7 +7,7 @@ package com.zglue.zgluesports.bluetooth;
 public interface DataChangedListener {
     void OnHeartBeatChanged(int rate);
     void OnStepsChanged(int steps);
-    void OnTemperatureChanged(int temperature);
+    void OnTemperatureChanged(float temperature);
     void OnBatteryChanged(int percent);
 
 }

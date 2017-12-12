@@ -126,7 +126,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                ((HomeHearBeatView)mContent.getChildAt(0)).OnHeartBeatChanged(rate); //setHeartBeat(rate);
+                ((HomeHearBeatView)mContent.getChildAt(2)).OnHeartBeatChanged(rate); //setHeartBeat(rate);
             }
         });
     }
@@ -138,11 +138,11 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                ((HomeStepView)mContent.getChildAt(2)).OnStepChanged(steps); //setSteps(steps);
+                ((HomeStepView)mContent.getChildAt(0)).OnStepChanged(steps); //setSteps(steps);
             }
         });
     }
-    public void OnTemperatureChanged(final int temperature){
+    public void OnTemperatureChanged(final float temperature){
         Log.e(TAG,"OnTemperatureChanged,temperature:" + temperature);
 
         getActivity().runOnUiThread(new Runnable() {

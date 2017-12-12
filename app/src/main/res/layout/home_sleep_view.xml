@@ -12,7 +12,6 @@
 
 
         <TextView
-                android:id="@+id/grid_item_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextStyleMedium"
@@ -24,7 +23,6 @@
 
 
         <TextView
-                android:id="@+id/grid_item_unit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -56,7 +54,7 @@
 
 
         <ImageButton
-                android:id="@+id/grid_item_button"
+                android:id="@+id/btn_find_me"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_pause_circle_outline_white_24px"

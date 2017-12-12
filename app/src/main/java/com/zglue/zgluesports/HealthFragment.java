@@ -53,20 +53,20 @@ public class HealthFragment extends Fragment implements DataChangedListener{
         mHBValue = (TextView) mFragmentView.findViewById(R.id.health_hb_value);
         mTempList = (ListView)mFragmentView.findViewById(R.id.health_temp_list);
         mTempAdapter = new RecordAdapter();
-        mTempAdapter.addEntity(new Record(36,"00:00"));
-        mTempAdapter.addEntity(new Record(36,"00:00"));
-        mTempAdapter.addEntity(new Record(36,"00:00"));
-        mTempAdapter.addEntity(new Record(36,"00:00"));
-        mTempAdapter.addEntity(new Record(36,"00:00"));
+        mTempAdapter.addEntity(new Record("36.0","00:00"));
+        mTempAdapter.addEntity(new Record("36.0","00:00"));
+        mTempAdapter.addEntity(new Record("36.0","00:00"));
+        mTempAdapter.addEntity(new Record("36.0","00:00"));
+        mTempAdapter.addEntity(new Record("36.0","00:00"));
         mTempList.setAdapter(mTempAdapter);
 
         mHBList = (ListView)mFragmentView.findViewById(R.id.health_hb_list);
         mHBAdapter = new RecordAdapter();
-        mHBAdapter.addEntity(new Record(70,"00:00"));
-        mHBAdapter.addEntity(new Record(70,"00:00"));
-        mHBAdapter.addEntity(new Record(70,"00:00"));
-        mHBAdapter.addEntity(new Record(70,"00:00"));
-        mHBAdapter.addEntity(new Record(70,"00:00"));
+        mHBAdapter.addEntity(new Record("70","00:00"));
+        mHBAdapter.addEntity(new Record("70","00:00"));
+        mHBAdapter.addEntity(new Record("70","00:00"));
+        mHBAdapter.addEntity(new Record("70","00:00"));
+        mHBAdapter.addEntity(new Record("70","00:00"));
         mHBList.setAdapter(mHBAdapter);
         return mFragmentView;
     }
@@ -75,7 +75,7 @@ public class HealthFragment extends Fragment implements DataChangedListener{
     public void onResume(){
         super.onResume();
         bdManager.addDataChangedListener(this);
-        mTempValue.setText(String.valueOf(bdManager.getTemprature()));
+        mTempValue.setText(String.valueOf(bdManager.getTemperature()));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class HealthFragment extends Fragment implements DataChangedListener{
                 if(!isAdded()){
                     return;
                 }
-                mHBAdapter.addEntity(new Record(rate,"00:00"));
+                mHBAdapter.addEntity(new Record(String.valueOf(rate),"00:00"));
                 mHBValue.setText(String.valueOf(rate));
                 mHBAdapter.notifyDataSetChanged();
             }
@@ -102,7 +102,7 @@ public class HealthFragment extends Fragment implements DataChangedListener{
     public void OnStepsChanged(int steps){
     }
     @Override
-    public void OnTemperatureChanged(final int temperature) {
+    public void OnTemperatureChanged(final float temperature) {
 
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -110,7 +110,7 @@ public class HealthFragment extends Fragment implements DataChangedListener{
                 if(!isAdded()){
                     return;
                 }
-                mTempAdapter.addEntity(new Record(temperature,"00:00"));
+                mTempAdapter.addEntity(new Record(String.valueOf(temperature),"00:00"));
                 mTempValue.setText(String.valueOf(temperature));
                 mTempAdapter.notifyDataSetChanged();
             }
@@ -123,9 +123,9 @@ public class HealthFragment extends Fragment implements DataChangedListener{
     }
 
     public  class Record{
-        public int _value;
+        public String _value;
         public String _timestamp;
-        public Record(int value, String timestamp){
+        public Record(String value, String timestamp){
             _value = value;
             _timestamp = timestamp;
         }

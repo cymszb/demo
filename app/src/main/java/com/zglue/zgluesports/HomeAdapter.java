@@ -46,13 +46,13 @@ public class HomeAdapter extends BaseAdapter {
             //HomeItemData data = mDataArray.get(position);
             switch (position){
                 case 0:
-                    convertView = new HomeHearBeatView(mContext);
+                    convertView = new HomeStepView(mContext);
                     break;
                 case 1:
                     convertView = new HomeSleepView(mContext);
                     break;
                 case 2:
-                    convertView = new HomeStepView(mContext);
+                    convertView = new HomeHearBeatView(mContext);
                     break;
                 case 3:
                     convertView = new HomeTemperatureView(mContext);

@@ -61,13 +61,13 @@ public class HomeTemperatureView extends FrameLayout {
     private void updateView(){
         if(isStarted/*bdManager.isTempStarted()*/){
             btnTempStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
-            textTempValue.setText(String.valueOf(bdManager.getTemprature()));
+            textTempValue.setText(String.valueOf(bdManager.getTemperature()));
         }else{
             btnTempStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textTempValue.setText("0");
         }
     }
-    public void OnTempChanged(int temp){
+    public void OnTempChanged(float temp){
         isStarted = true;
         updateView();
     }

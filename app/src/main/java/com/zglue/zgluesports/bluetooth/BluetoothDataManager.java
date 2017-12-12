@@ -69,6 +69,9 @@ public class BluetoothDataManager {
     private boolean isTempStarted = false;
     private boolean isStepStarted = false;
     private boolean isBatteryStarted = false;
+    private boolean isLED1Started = false;
+
+    private boolean isFindMeStarted = false;
 /*
     private String mHeartBeat;
     private String mSteps;
@@ -77,7 +80,7 @@ public class BluetoothDataManager {
 */
     private int mHeartBeat = 0;
     private int mSteps = 0;
-    private int mTemperature = 0;
+    private float mTemperature = 0;
     private int mBatteryPercent = 0;
 
     private int mConnectionState = STATE_DISCONNECTED;
@@ -184,21 +187,23 @@ public class BluetoothDataManager {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            int value = Integer.valueOf(getCharacteristicValue(characteristic));
+            //int value = Integer.valueOf(getCharacteristicValue(characteristic));
+
+            String value = getCharacteristicValue(characteristic);
             Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
                     + ";value: " + value);
 
             if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
-                mBatteryPercent = value;
+                mBatteryPercent = Integer.valueOf(value);
                 notifyBatteryChanged(mBatteryPercent);
             }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
-                mSteps = value;
+                mSteps = Integer.valueOf(value);
                 notifyStepsChanged(mSteps);
             }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
-                mTemperature = value;
+                mTemperature = Float.valueOf(value);
                 notifyTemperatureChanged(mTemperature);
             }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
-                mHeartBeat = value;
+                mHeartBeat = Integer.valueOf(value);
                 notifyHeartBeatChanged(mHeartBeat);
             }
         }
@@ -415,7 +420,7 @@ public class BluetoothDataManager {
         }
     }
 
-    private void notifyTemperatureChanged(int temperature){
+    private void notifyTemperatureChanged(float temperature){
         if(mDataChangedListeners!=null){
             for(int i=0;i<mDataChangedListeners.size();i++){
                 mDataChangedListeners.get(i).OnTemperatureChanged(temperature);
@@ -578,7 +583,13 @@ public class BluetoothDataManager {
             //for(int i = data.length - 1; i >= 0; i--){
 
             if(characteristic.getUuid().equals(UUID_TEMP_VALUE)) {
-                temperature = temperature  + (float) data[0] + (float) data[1]/10;
+                if(data.length == 1) {
+                    temperature = temperature + (float) data[0];
+                }else if(data.length == 2){
+                    temperature = temperature + (float) data[0] + (float) data[1] / 10;
+                }else{
+
+                }
                 stringBuilder.append(String.format("%.1f", temperature));
             }else{
                 for (int i = 0; i < data.length; i++) {
@@ -596,6 +607,19 @@ public class BluetoothDataManager {
 
     }
 
+    public boolean isFindMeStarted(){
+        return isLED1Started();
+    }
+    public void startFindeMe(boolean start){
+        startLED1(start);
+    }
+
+
+
+    public boolean isLED1Started(){
+        return isLED1Started;
+    }
+
     public void startLED1(boolean start){
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_LED1,start));
     }
@@ -610,6 +634,8 @@ public class BluetoothDataManager {
             moment();
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
+            isLED1Started =start;
+
 
         }else{
             Log.e(TAG,"Not support led.");
@@ -746,7 +772,7 @@ public class BluetoothDataManager {
         }*/
     }
 
-    public int getTemprature(){
+    public float getTemperature(){
         //if(mTemperature == null)return new String("0");
         return mTemperature;
         /*

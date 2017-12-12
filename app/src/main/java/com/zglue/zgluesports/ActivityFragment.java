@@ -91,7 +91,7 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
             }
         });
     }
-    public void OnTemperatureChanged(int temperature){}
+    public void OnTemperatureChanged(float temperature){}
     public void OnBatteryChanged(int percent){}
 
     private void updateView(){
