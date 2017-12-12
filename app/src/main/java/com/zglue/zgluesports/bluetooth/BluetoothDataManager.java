@@ -140,6 +140,12 @@ public class BluetoothDataManager {
 
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 mConnectionState = STATE_DISCONNECTED;
+                 isHearBeatStarted = false;
+                isTempStarted = false;
+                isStepStarted = false;
+                isBatteryStarted = false;
+                isLED1Started = false;
+
                 Log.i(TAG, "Disconnected from GATT server.");
                 //TODO
             } else if(newState == BluetoothProfile.STATE_CONNECTING){
@@ -269,21 +275,27 @@ public class BluetoothDataManager {
             public void handleMessage (Message msg){
                 switch (msg.what){
                     case TYPE_START_HB:
+                        moment();
                         startHeartbeatInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_BATTERY:
+                        moment();
                         startBatteryInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_STEPS:
+                        moment();
                         startStepsInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_TEMP:
+                        moment();
                         startTemperatureInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_VIBERATE:
+                        moment();
                         startViberateInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_LED1:
+                        moment();
                         startLED1Internal((boolean)msg.obj);
                         break;
                     default:
@@ -327,7 +339,7 @@ public class BluetoothDataManager {
 
         startBattery(true);
 
-       // startSteps(true);
+        startSteps(true);
 
 
     }
@@ -722,7 +734,7 @@ public class BluetoothDataManager {
 
     private void moment(){
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         }catch(Exception e){};
     }
 
