@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +33,10 @@ import com.zglue.zgluesports.bluetooth.BluetoothDataManager;
 import com.zglue.zgluesports.bluetooth.ConnectionListener;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.bluetooth.BluetoothDevice.DEVICE_TYPE_DUAL;
+import static android.bluetooth.BluetoothDevice.DEVICE_TYPE_LE;
 
 
 /**
@@ -177,7 +183,9 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            //bleManager.stopScan(mScanCallback);
             mScanning = false;
+            invalidateOptionsMenu();
 
         }
         ViewHolder holder = (ViewHolder)mDeviceList.getChildAt(position).getTag();
@@ -230,18 +238,64 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                 public void run() {
                     mScanning = false;
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    //bleManager.stopScan(mScanCallback);
                     invalidateOptionsMenu();
                 }
             }, SCAN_PERIOD);
 
             mScanning = true;
             mBluetoothAdapter.startLeScan(mLeScanCallback);
+            //bleManager.scanBLEDevice(mScanCallback);
         } else {
             mScanning = false;
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            //bleManager.stopScan(mScanCallback);
         }
         invalidateOptionsMenu();
     }
+    // Device scan callback.
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            new BluetoothAdapter.LeScanCallback() {
+
+                @Override
+                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(device.getType() == DEVICE_TYPE_LE && device.getName() != null && device.getName().length()>0) {
+                                mLeDeviceListAdapter.addDevice(device);
+                                mLeDeviceListAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                }
+            };
+
+    private ScanCallback mScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, final ScanResult result) {
+            super.onScanResult(callbackType, result);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(result.getDevice().getType() == DEVICE_TYPE_LE) {
+                        mLeDeviceListAdapter.addDevice(result.getDevice());
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            super.onBatchScanResults(results);
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+        }
+    };
 
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter {
@@ -267,6 +321,11 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         public void clear() {
             mLeDevices.clear();
         }
+
+
+
+
+
 
         @Override
         public int getCount() {
@@ -312,21 +371,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Device scan callback.
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
 
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mLeDeviceListAdapter.addDevice(device);
-                            mLeDeviceListAdapter.notifyDataSetChanged();
-                        }
-                    });
-                }
-            };
 
     static class ViewHolder {
         TextView deviceName;

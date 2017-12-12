@@ -9,10 +9,16 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -249,6 +255,8 @@ public class BluetoothDataManager {
             Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
             return false;
         }
+
+        mScanner = mBluetoothAdapter.getBluetoothLeScanner();
 
         mBlueToothThread.start();
         mBlueToothThreadHandler = new Handler(mBlueToothThread.getLooper()){
@@ -764,6 +772,65 @@ public class BluetoothDataManager {
             return mBatteryPercent;
         }
         */
+    }
+
+
+    /* new scan api*/
+
+    final ScanCallback mScanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+            Log.v("Callback", "in the callback");
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            Log.v("ScanTask", "Some error occurred");
+        }
+    };
+
+
+    BluetoothLeScanner mScanner;// = mBluetoothAdapter.getBluetoothLeScanner();
+
+    public void scanBLEDevice(ScanCallback callback){
+        //BluetoothLeScanner scanner = mBluetoothAdapter.getBluetoothLeScanner();
+        ScanSettings settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
+
+
+        //The list for the filters
+        ArrayList<ScanFilter> filters = new ArrayList<>();
+        ScanFilter.Builder builder = new ScanFilter.Builder();
+        //builder.setServiceUuid(new ParcelUuid(UUID_SERVICE_B)).build();
+        //filters.add(builder.setDeviceName("ZGLUE-*").build());
+        //filters.add(builder.setDeviceName("ZGLUE-*").build());
+
+
+        //mac adresses of ble devices
+        /*
+        String[] filterlist = {
+                "D4:B4:C8:7E:D1:35",
+                "C8:86:3A:91:0C:0C",
+                "FD:49:FD:36:04:B4",
+                "E9:91:4A:42:AC:3B",
+                //... some 20 more addresses
+        };
+
+        //adding the mac adresses to the filters list
+        for (int i=0; i< filterlist.length ; i++) {
+            ScanFilter filter = new ScanFilter.Builder().setDeviceAddress(filterlist[i]).build();
+            filters.add(filter);
+            Log.v("Filter: "," "+ filters.get(i).getDeviceAddress());
+        }
+        */
+        mScanner.startScan(null, settings, callback);
+
+
+
+    }
+
+    public void stopScan(ScanCallback callback){
+        mScanner.stopScan(callback);
     }
 
 
