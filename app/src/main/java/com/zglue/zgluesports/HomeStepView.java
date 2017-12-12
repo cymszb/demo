@@ -66,6 +66,8 @@ public class HomeStepView extends FrameLayout {
     }
 
     public void OnStepChanged(int steps){
+        if(bdManager.isStepStatusChanging())
+            return;
         isStarted = true;
         updateView();
     }

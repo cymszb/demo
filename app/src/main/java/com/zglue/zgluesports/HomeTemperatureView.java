@@ -68,6 +68,8 @@ public class HomeTemperatureView extends FrameLayout {
         }
     }
     public void OnTempChanged(float temp){
+        if(bdManager.isTempStatusChanging())
+            return;
         isStarted = true;
         updateView();
     }

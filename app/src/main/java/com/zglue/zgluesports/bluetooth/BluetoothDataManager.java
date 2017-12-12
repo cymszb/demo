@@ -65,11 +65,16 @@ public class BluetoothDataManager {
 
     private String mModeName;
 
-    private boolean isHearBeatStarted = false;
-    private boolean isTempStarted = false;
-    private boolean isStepStarted = false;
-    private boolean isBatteryStarted = false;
-    private boolean isLED1Started = false;
+    private volatile boolean isHearBeatStarted = false;
+    private volatile boolean isHearBeatStatusChanging = false;
+    private volatile boolean isTempStarted = false;
+    private volatile boolean isTempStatusChanging = false;
+    private volatile boolean isStepStarted = false;
+    private volatile boolean isStepStatusChanging = false;
+    private volatile boolean isBatteryStarted = false;
+    private volatile boolean isBatteryStatusChanging = false;
+    private volatile boolean isLED1Started = false;
+    private volatile boolean isLED1StatusChanging = false;
 
     private boolean isFindMeStarted = false;
 /*
@@ -631,8 +636,10 @@ public class BluetoothDataManager {
     public boolean isLED1Started(){
         return isLED1Started;
     }
+    public boolean isLED1StatusChanging(){return isLED1StatusChanging;}
 
     public void startLED1(boolean start){
+        isLED1StatusChanging = true;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_LED1,start));
     }
 
@@ -647,7 +654,7 @@ public class BluetoothDataManager {
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
             isLED1Started =start;
-
+            isLED1StatusChanging = false;
 
         }else{
             Log.e(TAG,"Not support led.");
@@ -669,9 +676,10 @@ public class BluetoothDataManager {
 
 
     public boolean isHearBeatStarted(){return isHearBeatStarted;}
-
+    public boolean isHearBeatStatusChanging(){return isHearBeatStatusChanging;}
 
     public void startHeartbeat(boolean start){
+        isHearBeatStatusChanging = true;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_HB,start));
     }
 
@@ -688,13 +696,16 @@ public class BluetoothDataManager {
             moment();
             setCharacteristicNotification(mHearBeatValueCharacteristic,start);
             isHearBeatStarted = start;
+            isHearBeatStatusChanging = false;
 
         }
     }
 
     public boolean isStepStarted(){return isStepStarted;}
+    public boolean isStepStatusChanging(){return isStepStatusChanging;}
 
     public void startSteps(boolean start) {
+        isStepStatusChanging = true;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_STEPS,start));
     }
     private void startStepsInternal(boolean start){
@@ -709,12 +720,15 @@ public class BluetoothDataManager {
             moment();
             setCharacteristicNotification(mStepsValueCharacteristic,start);
             isStepStarted = start;
+            isStepStatusChanging = false;
         }
     }
 
     public boolean isTempStarted(){return isTempStarted;}
+    public boolean isTempStatusChanging(){return isTempStatusChanging;}
 
     public void startTemperature(boolean start){
+        isTempStatusChanging = true;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_TEMP,start));
     }
     private void startTemperatureInternal(boolean start){
@@ -729,6 +743,7 @@ public class BluetoothDataManager {
             moment();
             setCharacteristicNotification(mTempValueCharacteristic,start);
             isTempStarted = start;
+            isTempStatusChanging = false;
         }
     }
 
@@ -739,8 +754,10 @@ public class BluetoothDataManager {
     }
 
     public boolean isBatteryStarted(){return isBatteryStarted;}
+    public boolean isBatteryStatusChanging(){return isBatteryStatusChanging;}
 
     public void startBattery(boolean start){
+        isBatteryStatusChanging = true;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_BATTERY,start));
     }
     private void startBatteryInternal(boolean start){
@@ -749,6 +766,7 @@ public class BluetoothDataManager {
             moment();
             setCharacteristicNotification(mBatteryValueCharacteristic,start);
             isBatteryStarted = start;
+            isBatteryStatusChanging = false;
         }
     }
 

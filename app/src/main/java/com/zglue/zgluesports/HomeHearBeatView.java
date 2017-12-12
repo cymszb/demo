@@ -66,6 +66,8 @@ public class HomeHearBeatView extends FrameLayout {
         }
     }
     public void OnHeartBeatChanged(int rate){
+        if(bdManager.isHearBeatStatusChanging())
+            return;
         isStarted = true;
         updateView();
     }
