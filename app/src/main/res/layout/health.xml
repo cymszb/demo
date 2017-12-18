@@ -11,7 +11,7 @@
                   android:layout_height="wrap_content"
                   android:padding="16dp"
                   android:orientation="horizontal"
-                  android:background="@drawable/background_steps_all">
+                  android:background="@drawable/background_temperature_all">
 
         <RelativeLayout android:layout_width="192dp"
                         android:layout_height="192dp"
@@ -109,7 +109,7 @@
                   android:layout_height="wrap_content"
                   android:padding="16dp"
                   android:orientation="horizontal"
-                  android:background="@drawable/background_activity_weekly">
+                  android:background="@drawable/background_hb_all">
 
         <RelativeLayout android:layout_width="192dp"
                         android:layout_height="192dp"

@@ -7,5 +7,5 @@ import android.bluetooth.BluetoothDevice;
  */
 
 public interface ConnectionListener {
-    void OnConnectStatusChanged(BluetoothDevice device,int state);
+    void OnDeviceConnectStatusChanged(BluetoothDevice device,int state);
 }

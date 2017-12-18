@@ -11,56 +11,62 @@
               android:background="@drawable/background_sleep_all">
 
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextStyleMedium"
-                android:text="9"
-                android:textSize="64sp"
-                android:textColor="@color/color_white"
-                android:visibility="invisible"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextStyleMedium"
+            android:text="9"
+            android:textSize="64sp"
+            android:textColor="@color/color_white"
+            android:visibility="gone"/>
 
 
-
-        <TextView
+    <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:nestedScrollingEnabled="true"
                 android:textAppearance="@style/TextStyleSmall"
                 android:text="Hours"
-                android:textSize="12sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:textColor="@color/color_white"
-                android:visibility="invisible"
+                android:visibility="gone"
         />
+    <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="68dp"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:adjustViewBounds="true"
+            app:srcCompat="@mipmap/model"
+            android:alpha="0.75"/>
 
-
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:gravity="center"
-                  android:orientation="horizontal"
-                  android:background="@drawable/background_sleep_bar">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                  android:background="@drawable/background_sleep_bar" >
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
+                android:layout_centerInParent="true"
                 android:textAppearance="@style/TextStyleTitle"
                 android:textStyle="bold"
                 android:text="Find Me"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textColor="@color/color_white"/>
 
 
         <ImageButton
                 android:id="@+id/btn_find_me"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_pause_circle_outline_white_24px"
-                android:background="@android:color/transparent"/>
+                android:background="@drawable/ripple_pink"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>

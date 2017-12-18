@@ -135,13 +135,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStop(){
         super.onStop();
-        bdManager.disconnect();
+        //bdManager.disconnect();
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
+        bdManager.disconnect();
         bdManager.close();
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 
     @SuppressLint("NewApi")

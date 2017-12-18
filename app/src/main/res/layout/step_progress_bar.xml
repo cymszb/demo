@@ -37,7 +37,7 @@
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:background="@drawable/background_steps_bar">
+            android:background="@drawable/background_steps_target">
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

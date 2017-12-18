@@ -207,8 +207,8 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
     }
 
 
-    public void OnConnectStatusChanged(final BluetoothDevice device,final int state){
-        Log.e(TAG,"OnConnectStatusChanged,state:" + state);
+    public void OnDeviceConnectStatusChanged(final BluetoothDevice device,final int state){
+        Log.e(TAG,"OnDeviceConnectStatusChanged,state:" + state);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -304,7 +304,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
 
         public LeDeviceListAdapter() {
             super();
-            mLeDevices = new ArrayList<BluetoothDevice>();
+            mLeDevices = new ArrayList<>();
             //mInflator = LayoutInflater.from(BluetoothScanActivity.this); //DeviceScanActivity.this.getLayoutInflater();
         }
 

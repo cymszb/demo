@@ -45,7 +45,7 @@
                         android:layout_height="103dp"
                         android:layout_margin="16dp"
                         android:adjustViewBounds="true"
-                        android:src="@mipmap/model"/>
+                        android:src="@mipmap/logo"/>
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -62,25 +62,23 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+        android:background="@drawable/background_common">
+
 
             <TextView
-                    android:id="@+id/text_battery_percent"
+                    android:id="@+id/text_model_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:gravity="center"
-                    android:text="0"
+                    android:text="No Device"
                     android:textAppearance="@style/TextStyleSmall"
-                    android:textColor="@color/color_brown"
-                    android:textSize="10sp"
+                    android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/ic_battery_std_white_24px"
             />
-
             <!--
             <ImageView
                 android:layout_width="wrap_content"
@@ -91,21 +89,40 @@
 
             <FrameLayout
                 android:layout_width="2dp"
-                android:layout_height="24dp"
+                android:layout_height="18dp"
                 android:background="@color/color_white"
                 />
+            <RelativeLayout
+                    android:layout_width="wrap_content"
+                     android:layout_height="32dp"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp">
+                <TextView
+                        android:id="@+id/text_battery_percent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_alignParentTop="true"
+                        android:text="30%"
+                        android:textAppearance="@style/TextStyleSmall"
+                        android:textColor="@color/color_white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                />
+
+                <ImageView android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:rotation="90"
+                           android:layout_centerInParent="true"
+                           android:layout_alignParentBottom="true"
+                           app:srcCompat="@drawable/ic_battery_std_white_24px"
+                />
+
+            </RelativeLayout>
 
 
-            <TextView
-                android:id="@+id/text_model_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="No Device"
-                android:textAppearance="@style/TextStyleSmall"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-               />
+
 
 
         </LinearLayout>
@@ -150,7 +167,8 @@
         android:layout_margin="16dp"
         android:adjustViewBounds="true"
         app:srcCompat="@mipmap/logo"
-        android:alpha="0.75"/>
+        android:alpha="0.75"
+    android:visibility="gone"/>
 
 
 </LinearLayout>

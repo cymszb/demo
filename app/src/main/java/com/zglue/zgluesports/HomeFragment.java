@@ -3,6 +3,7 @@ package com.zglue.zgluesports;
 import com.zglue.zgluesports.bluetooth.BluetoothDataManager;
 import com.zglue.zgluesports.bluetooth.ConnectionListener;
 import com.zglue.zgluesports.bluetooth.DataChangedListener;
+import com.zglue.zgluesports.bluetooth.SensorConnectionStatusListener;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
@@ -21,7 +22,7 @@ import android.widget.TextView;
  * Created by Micki on 2017/11/5.
  */
 
-public class HomeFragment extends Fragment implements ConnectionListener,DataChangedListener{
+public class HomeFragment extends Fragment implements ConnectionListener,DataChangedListener,SensorConnectionStatusListener{
     private static final String TAG = HomeFragment.class.getName();
 
     private View mFragmentView;
@@ -54,7 +55,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         textModelName = (TextView) mFragmentView.findViewById(R.id.text_model_name);
         textBatteryPercent = (TextView) mFragmentView.findViewById(R.id.text_battery_percent);
         textModelName.setText(bdManager.getModelName()!=null?bdManager.getModelName():"No Device");
-        textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent()));
+        textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+"%");
         initPairButton(mPairBtn);
         mContent = (GridView) mFragmentView.findViewById(R.id.content_grid);
         HomeAdapter adapter = new HomeAdapter(this.getContext());
@@ -71,9 +72,11 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
     @Override
     public void onResume(){
         super.onResume();
+
         bdManager.addConnectionListener(this);
         bdManager.addDataChangedListener(this);
-
+        bdManager.addSensorConnectionStatusListener(this);
+        updateAllViewStatus();;
         if(bdManager.isDeviceAvailable()){
             textModelName.setText(bdManager.getModelName());
             mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_connected_white_24px));
@@ -90,6 +93,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         super.onPause();
         bdManager.removeConnectionListener(this);
         bdManager.removeDataChangedListener(this);
+        bdManager.removeSensorConnectionStatusListener(this);
     }
 
 
@@ -105,14 +109,73 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         });
     }
 
-    public void OnConnectStatusChanged(final BluetoothDevice device, final int state){
-        Log.e(TAG,"OnConnectStatusChanged,state:" + state);
+    private void updateAllViews(){
+        updateAllViewStatus();
+        //updateAllViewData();
+    }
+
+    private void updateAllViewStatus(){
+        updateHeartRateStatus();
+        updateStepsStatus();
+        updateTemperatureStatus();
+    }
+
+    void updateHeartRateStatus(){
+        if(mContent.getChildAt(2)!=null) {
+            ((HomeHearBeatView) mContent.getChildAt(2)).OnDeviceConnectStatusChanged(bdManager.getConnectionState());
+            ((HomeHearBeatView) mContent.getChildAt(2)).OnHeartRateSensorChanged(bdManager.getHeartRateConnStatus());
+        }
+    }
+
+    void updateStepsStatus(){
+        if(mContent.getChildAt(1)!=null) {
+            ((HomeStepView) mContent.getChildAt(1)).OnDeviceConnectStatusChanged(bdManager.getConnectionState());
+            ((HomeStepView) mContent.getChildAt(1)).OnStepsSensorChanged(bdManager.getStepConnStatus());
+        }
+    }
+
+    void updateTemperatureStatus(){
+        if(mContent.getChildAt(0)!=null) {
+            ((HomeTemperatureView) mContent.getChildAt(0)).OnDeviceConnectStatusChanged(bdManager.getConnectionState());
+            ((HomeTemperatureView)mContent.getChildAt(0)).OnTemperatureSensorChanged(bdManager.getTemperatureConnStatus());
+        }
+    }
+
+    private void updateAllViewData(){
+        updateHeartRate();
+        updateSteps();
+        updateTemperature();
+    }
+
+    void updateHeartRate(){
+        if(mContent.getChildAt(2)!=null)
+        ((HomeHearBeatView)mContent.getChildAt(2)).OnHeartBeatChanged(bdManager.getHeartBeat());
+    }
+
+    void updateSteps(){
+        if(mContent.getChildAt(1)!=null)
+        ((HomeStepView)mContent.getChildAt(1)).OnStepChanged(bdManager.getDailySteps());
+    }
+
+    void updateTemperature(){
+        if(mContent.getChildAt(0)!=null)
+        ((HomeTemperatureView)mContent.getChildAt(0)).OnTempChanged(bdManager.getTemperature());
+    }
+
+    public void OnDeviceConnectStatusChanged(final BluetoothDevice device, final int state){
+        Log.e(TAG,"OnDeviceConnectStatusChanged,state:" + state);
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(state == BluetoothProfile.STATE_CONNECTED){
-                    textModelName.setText(bdManager.getModelName());
+                if(!isAdded()){
+                    return;
                 }
+
+                textModelName.setText(bdManager.getModelName());
+                textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+"%");
+
+                updateAllViewStatus();
+
             }
         });
     }
@@ -126,7 +189,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                ((HomeHearBeatView)mContent.getChildAt(2)).OnHeartBeatChanged(rate); //setHeartBeat(rate);
+               updateHeartRate();
             }
         });
     }
@@ -138,7 +201,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                ((HomeStepView)mContent.getChildAt(0)).OnStepChanged(steps); //setSteps(steps);
+                updateSteps();
             }
         });
     }
@@ -151,7 +214,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                ((HomeTemperatureView)mContent.getChildAt(3)).OnTempChanged(temperature); //setTempereature(temperature);
+                updateTemperature();
             }
         });
     }
@@ -164,7 +227,59 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                 if(!isAdded()){
                     return;
                 }
-                textBatteryPercent.setText(String.valueOf(percent));
+                textBatteryPercent.setText(String.valueOf(percent)+"%");
+            }
+        });
+    }
+
+
+    public void OnBatterySensorChanged(final int progress){
+        Log.e(TAG,"OnBatterySensorChanged,progress:" + progress);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!isAdded()){
+                    return;
+                }
+                textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+ "%");
+            }
+        });
+    }
+    public void OnHeartRateSensorChanged(final int progress){
+        Log.e(TAG,"OnHeartRateSensorChanged,progress:" + progress);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!isAdded()){
+                    return;
+                }
+                ((HomeHearBeatView)mContent.getChildAt(2)).OnHeartRateSensorChanged(progress);
+            }
+        });
+    }
+    public void OnStepsSensorChanged(final int progress){
+        Log.e(TAG,"OnStepsSensorChanged,progress:" + progress);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!isAdded()){
+                    return;
+                }
+                ((HomeStepView)mContent.getChildAt(1)).OnStepsSensorChanged(progress);
+            }
+        });
+
+    }
+    public void OnTemperatureSensorChanged(final int progress){
+        Log.e(TAG,"OnTemperatureSensorChanged,progress:" + progress);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!isAdded()){
+                    return;
+                }
+                ((HomeTemperatureView)mContent.getChildAt(0)).OnTemperatureSensorChanged(progress);
             }
         });
     }

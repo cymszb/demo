@@ -10,26 +10,39 @@
               android:gravity="center"
               android:background="@drawable/background_steps_all">
 
-    <LinearLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
     >
+        <ImageView android:layout_width="18dp"
+                   android:layout_height="18dp"
+                   android:src="@drawable/ic_man_stand"
+                   android:layout_margin="8dp"
+                    />
+
+        <ImageView
+                android:id="@+id/status_dot"
+                android:layout_width="9dp"
+                   android:layout_height="9dp"
+                   android:src="@drawable/circle_green"
+                   android:layout_alignParentEnd="true"
+                   android:layout_margin="8dp"
+        />
 
         <TextView
                 android:id="@+id/text_step_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_centerInParent="true"
+                android:paddingTop="20dp"
                 android:textAppearance="@style/TextStyleMedium"
                 android:text="15687"
                 android:maxLines="1"
                 android:textSize="48sp"
-                android:textColor="@color/color_white" android:elevation="20dp"/>
+                android:textColor="@color/color_white"/>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <TextView
             android:layout_width="wrap_content"
@@ -43,33 +56,32 @@
             android:textColor="@color/color_white"
     />
 
-    <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:gravity="center"
-                  android:orientation="horizontal"
+    <RelativeLayout android:layout_width="match_parent"
+                  android:layout_height="36dp"
                   android:background="@drawable/background_steps_bar">
 
 
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
+                android:layout_centerInParent="true"
                 android:textAppearance="@style/TextStyleTitle"
                 android:textStyle="bold"
                 android:text="Pedometer"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textColor="@color/color_white"/>
 
 
         <ImageButton
                 android:id="@+id/btn_step_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_pause_circle_outline_white_24px"
-                android:background="@android:color/transparent"/>
+                android:background="@drawable/ripple_pink"
+                android:visibility="invisible"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>
