@@ -9,4 +9,5 @@ public interface SensorConnectionStatusListener {
     void OnHeartRateSensorChanged(int progress);
     void OnStepsSensorChanged(int progress);
     void OnTemperatureSensorChanged(int progress);
+    void OnLED1Changed(int progress);
 }

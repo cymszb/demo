@@ -10,16 +10,37 @@
               android:gravity="center"
               android:background="@drawable/background_sleep_all">
 
-
-    <TextView
-            android:layout_width="wrap_content"
+    <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextStyleMedium"
-            android:text="9"
-            android:textSize="64sp"
-            android:textColor="@color/color_white"
-            android:visibility="gone"/>
+    >
 
+        <ImageView android:id="@+id/status_dot"
+                   android:layout_width="9dp"
+                   android:layout_height="9dp"
+                   android:src="@drawable/circle_green"
+                   android:layout_alignParentEnd="true"
+                   android:layout_margin="8dp"
+        />
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextStyleMedium"
+                android:text="9"
+                android:textSize="64sp"
+                android:textColor="@color/color_white"
+                android:visibility="gone"/>
+        <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="68dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:adjustViewBounds="true"
+                app:srcCompat="@mipmap/model"
+                android:alpha="0.75"/>
+    </RelativeLayout>
 
     <TextView
                 android:layout_width="wrap_content"
@@ -33,15 +54,9 @@
                 android:textColor="@color/color_white"
                 android:visibility="gone"
         />
-    <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="68dp"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
-            android:adjustViewBounds="true"
-            app:srcCompat="@mipmap/model"
-            android:alpha="0.75"/>
+
+
+
 
     <RelativeLayout android:layout_width="match_parent"
                     android:layout_height="36dp"

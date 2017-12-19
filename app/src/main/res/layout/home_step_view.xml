@@ -14,7 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
     >
-        <ImageView android:layout_width="18dp"
+        <ImageView
+                android:id="@+id/status_feature"
+                android:layout_width="18dp"
                    android:layout_height="18dp"
                    android:src="@drawable/ic_man_stand"
                    android:layout_margin="8dp"

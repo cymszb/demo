@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         updateHeartRateStatus();
         updateStepsStatus();
         updateTemperatureStatus();
+        updateLED1Status();
     }
 
     void updateHeartRateStatus(){
@@ -138,6 +139,13 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         if(mContent.getChildAt(0)!=null) {
             ((HomeTemperatureView) mContent.getChildAt(0)).OnDeviceConnectStatusChanged(bdManager.getConnectionState());
             ((HomeTemperatureView)mContent.getChildAt(0)).OnTemperatureSensorChanged(bdManager.getTemperatureConnStatus());
+        }
+    }
+
+    void updateLED1Status(){
+        if(mContent.getChildAt(3)!=null) {
+            ((HomeSleepView) mContent.getChildAt(3)).OnDeviceConnectStatusChanged(bdManager.getConnectionState());
+            ((HomeSleepView)mContent.getChildAt(3)).OnLED1Changed(bdManager.getLED1ConnStatus());
         }
     }
 
@@ -280,6 +288,19 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
                     return;
                 }
                 ((HomeTemperatureView)mContent.getChildAt(0)).OnTemperatureSensorChanged(progress);
+            }
+        });
+    }
+
+    public void OnLED1Changed(final int progress){
+        Log.e(TAG,"OnLED1Changed,progress:" + progress);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(!isAdded()){
+                    return;
+                }
+                ((HomeSleepView)mContent.getChildAt(3)).OnLED1Changed(progress);
             }
         });
     }

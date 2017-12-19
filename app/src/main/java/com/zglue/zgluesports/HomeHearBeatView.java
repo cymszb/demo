@@ -23,6 +23,7 @@ public class HomeHearBeatView extends FrameLayout {
     private ImageView statusDot;
     private BluetoothDataManager bdManager;
     private boolean isStarted = false;
+
     public HomeHearBeatView(Context context) {
         super(context);
         mContext = context;

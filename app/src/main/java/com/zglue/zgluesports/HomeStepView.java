@@ -21,6 +21,7 @@ public class HomeStepView extends FrameLayout {
     private TextView textStepValue;
     private ImageButton btnStepStart;
     private ImageView statusDot;
+    private ImageView statusFeature;
     private BluetoothDataManager bdManager;
     private boolean isStarted = false;
     public HomeStepView(Context context) {
@@ -48,7 +49,7 @@ public class HomeStepView extends FrameLayout {
         btnStepStart = (ImageButton)view.findViewById(R.id.btn_step_start);
         textStepValue = (TextView)view.findViewById(R.id.text_step_value);
         statusDot = (ImageView)view.findViewById(R.id.status_dot);
-
+        statusFeature = (ImageView)view.findViewById(R.id.status_feature);
         btnStepStart.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +69,16 @@ public class HomeStepView extends FrameLayout {
         }else{
             btnStepStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textStepValue.setText("0");
+        }
+
+        if(bdManager.getStepFeature() == BluetoothDataManager.STEP_STAND){
+            statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_stand));
+        }else if(bdManager.getStepFeature() == BluetoothDataManager.STEP_FEATURE_WALK){
+            statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk_white_24px));
+
+        }else if(bdManager.getStepFeature() == BluetoothDataManager.STEP_FEATURE_RUN){
+            statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_run_white_24px));
+
         }
     }
 

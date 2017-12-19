@@ -66,24 +66,10 @@ public class BluetoothDataManager {
 
     private String mModelName;
 
-    //private volatile boolean isHearBeatStarted = false;
-    //private volatile boolean isHearBeatStatusChanging = false;
     private volatile int mHeartRateConnStatus = SENSOR_CONN_OFF;
-
-    //private volatile boolean isTempStarted = false;
-    //private volatile boolean isTempStatusChanging = false;
     private volatile int mTemperatureConnStatus = SENSOR_CONN_OFF;
-
-    //private volatile boolean isStepStarted = false;
-    //private volatile boolean isStepStatusChanging = false;
     private volatile int mStepConnStatus = SENSOR_CONN_OFF;
-
-    //private volatile boolean isBatteryStarted = false;
-    //private volatile boolean isBatteryStatusChanging = false;
     private volatile int mBatteryConnStatus = SENSOR_CONN_OFF;
-
-    private volatile boolean isLED1Started = false;
-    private volatile boolean isLED1StatusChanging = false;
     private volatile int mLED1ConnStatus = SENSOR_CONN_OFF;
 
     private boolean isFindMeStarted = false;
@@ -93,7 +79,14 @@ public class BluetoothDataManager {
     private float mTemperature = 0;
     private int mBatteryPercent = 0;
 
+    private  int mStepFeature = STEP_STAND;
+
     private int mConnectionState = STATE_DISCONNECTED;
+
+    public static final int STEP_STAND = 0;
+    public static final int STEP_FEATURE_WALK = 1;
+    public static final int STEP_FEATURE_RUN = 2;
+
 
     public static final int STATE_DISCONNECTED = 0;
     public static final int STATE_CONNECTING = 1;
@@ -191,21 +184,15 @@ public class BluetoothDataManager {
                     + ";value: " + value);
 
             if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
-                //mBatteryPercent = Integer.valueOf(value);
-                //notifyBatteryChanged(mBatteryPercent);
                 setBatteryPercent(Integer.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
-                //mSteps = Integer.valueOf(value);
-                //notifyStepsChanged(mSteps);
                 setDailySteps(Integer.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
-                //mTemperature = Float.valueOf(value);
-                //notifyTemperatureChanged(mTemperature);
                 setTemperature(Float.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
-                //mHeartBeat = Integer.valueOf(value);
-                //notifyHeartBeatChanged(mHeartBeat);
                 setHeartBeat(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
+                setStepFeature(Integer.valueOf(value));
             }
 
         }
@@ -213,28 +200,20 @@ public class BluetoothDataManager {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            //int value = Integer.valueOf(getCharacteristicValue(characteristic));
-
             String value = getCharacteristicValue(characteristic);
             Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
                     + ";value: " + value);
 
             if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
-                //mBatteryPercent = Integer.valueOf(value);
-                //notifyBatteryChanged(mBatteryPercent);
                 setBatteryPercent(Integer.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
-                //mSteps = Integer.valueOf(value);
-                //notifyStepsChanged(mSteps);
                 setDailySteps(Integer.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
-                //mTemperature = Float.valueOf(value);
-                //notifyTemperatureChanged(mTemperature);
                 setTemperature(Float.valueOf(value));
             }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
-                //mHeartBeat = Integer.valueOf(value);
-                //notifyHeartBeatChanged(mHeartBeat);
                 setHeartBeat(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
+                setStepFeature(Integer.valueOf(value));
             }
         }
     };
@@ -375,7 +354,7 @@ public class BluetoothDataManager {
         //isTempStarted = false;
         //isStepStarted = false;
         //isBatteryStarted = false;
-        isLED1Started = false;
+
         mModelName = new String("No Device");
         mHeartBeat = 0;
         mSteps = 0;
@@ -386,6 +365,7 @@ public class BluetoothDataManager {
         setHeartRateConnStatus(SENSOR_CONN_OFF);
         setStepConnStatus(SENSOR_CONN_OFF);
         setTemperatureConnStatus(SENSOR_CONN_OFF);
+        setLED1ConnStatus(SENSOR_CONN_OFF);
 
 
 
@@ -542,6 +522,14 @@ public class BluetoothDataManager {
         }
     }
 
+    public void notifyLED1Changed(int curStatus){
+        if(mSensorConnectionStatusListeners!=null){
+            for(int i=0;i<mSensorConnectionStatusListeners.size();i++){
+                mSensorConnectionStatusListeners.get(i).OnLED1Changed(curStatus);
+            }
+        }
+    }
+
 
 
     /**
@@ -684,15 +672,6 @@ public class BluetoothDataManager {
         if (data != null && data.length > 0) {
 
             final StringBuilder stringBuilder = new StringBuilder();
-            //for(byte byteChar : data) {
-            /*
-            for(int i = data.length - 1; i >= 0; i--){
-                Log.e(TAG, "value: " + data[i]);
-                value = (data[i] & 0xff) | (value << 8);
-            }
-            stringBuilder.append(String.format("%d", value));
-            */
-            //for(int i = data.length - 1; i >= 0; i--){
 
             if(characteristic.getUuid().equals(UUID_TEMP_VALUE)) {
                 if(data.length == 1) {
@@ -722,19 +701,23 @@ public class BluetoothDataManager {
     public boolean isFindMeStarted(){
         return isLED1Started();
     }
+
     public void startFindeMe(boolean start){
         startLED1(start);
     }
 
+    public int getFindMeStatus(){return getLED1ConnStatus();}
+
 
 
     public boolean isLED1Started(){
-        return isLED1Started;
+        return mLED1ConnStatus == SENSOR_CONN_ON;
     }
-    public boolean isLED1StatusChanging(){return isLED1StatusChanging;}
+    public boolean isLED1StatusChanging(){return mLED1ConnStatus == SENSOR_CONN_IN_PROGRESS;}
 
     public void startLED1(boolean start){
-        isLED1StatusChanging = true;
+        //isLED1StatusChanging = true;
+        setLED1ConnStatus(SENSOR_CONN_IN_PROGRESS);
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_LED1,start));
     }
 
@@ -748,13 +731,23 @@ public class BluetoothDataManager {
             moment();
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
-            isLED1Started =start;
-            isLED1StatusChanging = false;
+            //isLED1Started =start;
+            //isLED1StatusChanging = false;
+            setLED1ConnStatus(start?SENSOR_CONN_ON:SENSOR_CONN_OFF);
 
         }else{
             Log.e(TAG,"Not support led.");
         }
     }
+    public void setLED1ConnStatus(int led1ConnStatus) {
+        mLED1ConnStatus = led1ConnStatus;
+        notifyLED1Changed(led1ConnStatus);
+    }
+    public int getLED1ConnStatus(){return mLED1ConnStatus;}
+
+
+
+
 
     public void startViberate(boolean start){
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_VIBERATE,start));
@@ -818,8 +811,6 @@ public class BluetoothDataManager {
     public int getStepConnStatus(){return mStepConnStatus;}
 
     public void startSteps(boolean start) {
-        //isStepStatusChanging = true;
-        //mStepConnStatus = SENSOR_CONN_IN_PROGRESS;
         setStepConnStatus(SENSOR_CONN_IN_PROGRESS);
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_STEPS,start));
     }
@@ -834,9 +825,11 @@ public class BluetoothDataManager {
             if(start) readCharacteristic(mStepsValueCharacteristic);
             moment();
             setCharacteristicNotification(mStepsValueCharacteristic,start);
-            //isStepStarted = start;
-            //isStepStatusChanging = false;
-            //mStepConnStatus = start? SENSOR_CONN_ON:SENSOR_CONN_OFF;
+            moment();
+            if(start) readCharacteristic(mStepsFeatureCharacteristic);
+            moment();
+            setCharacteristicNotification(mStepsFeatureCharacteristic,start);
+
             setStepConnStatus(start? SENSOR_CONN_ON:SENSOR_CONN_OFF);
         }
     }
@@ -946,9 +939,17 @@ public class BluetoothDataManager {
         }*/
     }
 
+    public int getStepFeature(){
+        return mStepFeature;
+    }
+
     public void setDailySteps(int steps){
         mSteps = steps;
         notifyStepsChanged(steps);
+    }
+
+    public void setStepFeature(int feature){
+        mStepFeature = feature;
     }
 
     public float getTemperature(){

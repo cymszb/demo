@@ -8,7 +8,7 @@
     <solid android:color = "@color/color_red"
         />
         -->
-    <solid android:color = "@color/color_green"
+    <solid android:color = "@color/color_light_green"
     />
 
 </shape>
