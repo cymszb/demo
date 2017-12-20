@@ -74,6 +74,7 @@ public class BluetoothDataManager {
 
     private boolean isFindMeStarted = false;
 
+    private int mLastHeartBeatRecord = 0;
     private int mHeartBeat = 0;
     private int mSteps = 0;
     private float mTemperature = 0;
@@ -298,7 +299,7 @@ public class BluetoothDataManager {
                         startViberateInternal((boolean)msg.obj);
                         break;
                     case TYPE_START_LED1:
-                        moment();
+                        moment(1000);
                         startLED1Internal((boolean)msg.obj);
                         break;
                     default:
@@ -728,7 +729,7 @@ public class BluetoothDataManager {
             mLEDRangeCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDRangeCharacteristic);
 
-            moment();
+            moment(1000);
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
             //isLED1Started =start;
@@ -762,6 +763,13 @@ public class BluetoothDataManager {
         }
     }
 
+    public void recordOnce(){
+        mLastHeartBeatRecord = mHeartBeat;
+    }
+
+    public int getLastRecord(){
+        return mLastHeartBeatRecord;
+    }
 
     public boolean isHearBeatStarted(){return mHeartRateConnStatus == SENSOR_CONN_ON;}
     public boolean isHearBeatStatusChanging(){return mHeartRateConnStatus == SENSOR_CONN_IN_PROGRESS;}
@@ -871,6 +879,12 @@ public class BluetoothDataManager {
     private void moment(){
         try {
             Thread.sleep(500);
+        }catch(Exception e){};
+    }
+
+    private void moment(int ms){
+        try {
+            Thread.sleep(ms);
         }catch(Exception e){};
     }
 
