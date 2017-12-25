@@ -22,7 +22,11 @@ public class RecordManager {
 
 
     private static Context mContext;
-    //private static HistoryDatabase mDatabase = null;
+    private static RecordDatabase mDatabase = null;
+
+    private int mLastHeartBeatRecord = 0;
+    private float mLastTemperatureRecord = 0;
+
 
     /*Handle database in worker thread*/
     private HandlerThread	 mHistoryThread;
@@ -101,7 +105,7 @@ public class RecordManager {
      * initialize
      */
     private void init(){
-        //mDatabase = HistoryDatabase.getInstance(mContext);
+        mDatabase = RecordDatabase.getInstance(mContext);
         mHistoryThread = new HandlerThread("HistoryThread");
         mHistoryThread.start();
         mHistoryHandler = new HistoryHandler(mHistoryThread.getLooper());

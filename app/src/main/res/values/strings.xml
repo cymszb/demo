@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">zgluesports</string>
+    <string name="app_name1">Zglue</string>
     <string name="title_home">Home</string>
     <string name="title_activity">Activity</string>
     <string name="title_health">Health</string>

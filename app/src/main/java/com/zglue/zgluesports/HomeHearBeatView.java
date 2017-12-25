@@ -100,13 +100,17 @@ public class HomeHearBeatView extends FrameLayout {
             case BluetoothDataManager.SENSOR_CONN_ON:
                 btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
                 statusDot.setImageDrawable(getResources().getDrawable(R.drawable.circle_green));
-                startProgress(30);
+                if(!isTesting) {
+                    startProgress(30);
+                }else{
+
+                }
                 setButtonEnable(true);
                 break;
             case BluetoothDataManager.SENSOR_CONN_OFF:
                 btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
                 statusDot.setImageDrawable(getResources().getDrawable(R.drawable.circle_grey));
-                forceStopProgress();
+                //forceStopProgress();
                 setButtonEnable(true);
                 break;
             default:
@@ -148,7 +152,7 @@ public class HomeHearBeatView extends FrameLayout {
             if (msg.what > 0) {
                 progressTime.setText(String.valueOf(msg.what));
             } else {
-                forceStopProgress();
+                stopProgress();
                 btnHbStart.performClick();
             }
         }
@@ -173,8 +177,10 @@ public class HomeHearBeatView extends FrameLayout {
                 public void run() {
                     Message msg = new Message();
                     msg.what = second;
-                    handler.sendMessage(msg);
-                    second--;
+                    if(second >= 0) {
+                        handler.sendMessage(msg);
+                        second--;
+                    }
                 }
             };
             mProgressTimer.schedule(mTimerTask, 0, 1000);
@@ -183,8 +189,8 @@ public class HomeHearBeatView extends FrameLayout {
 
     }
 
-    private void forceStopProgress(){
-        bdManager.recordOnce();
+    private void stopProgress(){
+        bdManager.recordHeartBeat();
         if(isTesting == true) {
             progressBar.setVisibility(View.INVISIBLE);
             if (mTimerTask != null) {
@@ -193,6 +199,22 @@ public class HomeHearBeatView extends FrameLayout {
             }
             isTesting = false;
         }
+    }
+
+    private void forceStopProgress(){
+        //bdManager.recordOnce();
+        if(isTesting == true) {
+            progressBar.setVisibility(View.INVISIBLE);
+            if (mTimerTask != null) {
+                mTimerTask.cancel();
+                mTimerTask = null;
+            }
+            isTesting = false;
+        }
+    }
+
+    private void onStop(){
+        forceStopProgress();
     }
 
 

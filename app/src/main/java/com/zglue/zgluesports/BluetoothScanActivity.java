@@ -1,5 +1,6 @@
 package com.zglue.zgluesports;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -13,6 +14,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -54,6 +57,11 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
     private BluetoothDataManager bleManager;
 
     private ListView mDeviceList;
+    private TextView mPairedTitle;
+    private View mPairedDevice;
+    private TextView mPairedName;
+    private TextView mPairedAddress;
+    private Button mDiscBtn;
 
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 10 seconds.
@@ -65,14 +73,15 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         setContentView(R.layout.activity_scan);
         mDeviceList = (ListView) findViewById(R.id.device_list);
         mDeviceList.setOnItemClickListener(this);
-
-        //getActionBar().setTitle(R.string.title_scan_activity);
+        mPairedTitle = (TextView) findViewById(R.id.paired_title);
+        mPairedDevice = findViewById(R.id.paired_device);
+        mPairedName = (TextView)findViewById(R.id.device_name);
+        mPairedAddress = (TextView)findViewById(R.id.device_address);
+        mDiscBtn = (Button)findViewById(R.id.disconnect_btn);
 
         getSupportActionBar().setTitle(R.string.title_scan_activity);
-        //getSupportActionBar().setIcon(R.mipmap.logo);
-
-        //getSupportActionBar().setCustomView(R.layout.actionbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mHandler = new Handler();
 
         // Use this check to determine whether BLE is supported on the device.  Then you can
@@ -81,6 +90,8 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
             Toast.makeText(this, "Phone not support BLE feature", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        requestPermission();
 
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
@@ -96,6 +107,70 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         }
 
         bleManager = BluetoothDataManager.getInstance(this.getApplicationContext());
+
+
+        mDiscBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mScanning) {
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                    //bleManager.stopScan(mScanCallback);
+                    mScanning = false;
+                    invalidateOptionsMenu();
+                }
+
+                bleManager.disconnect();
+                //updatePairedDevice();
+                //mLeDeviceListAdapter.clear();
+                //scanLeDevice(true);
+
+            }
+        });
+        updatePairedDevice();
+    }
+
+    private void updatePairedDevice(){
+        if(bleManager.getConnectionState() == BluetoothDataManager.STATE_CONNECTED){
+            mPairedTitle.setVisibility(View.VISIBLE);
+            mPairedDevice.setVisibility(View.VISIBLE);
+            mPairedName.setText(bleManager.getModelName());
+            mPairedAddress.setText(bleManager.getBluetoothDeviceAddress());
+        }else {
+            mPairedTitle.setVisibility(View.GONE);
+            mPairedDevice.setVisibility(View.GONE);
+        }
+    }
+
+
+
+
+    private void requestPermission(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        1);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
     }
 
 
@@ -174,28 +249,24 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG,"onListItemClick, on pistion:" + position);
+        Log.d(TAG,"onListItemClick, on position:" + position);
 
-        final BluetoothDevice device = mLeDeviceListAdapter.getDevice(position);
-        if (device == null) return;
-        //final Intent intent = new Intent(this, DeviceControlActivity.class);
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getName());
-        //intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getAddress());
+        final DeviceEntity device = mLeDeviceListAdapter.getDevice(position);
+        if (device == null)
+            return;
+
         if (mScanning) {
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             //bleManager.stopScan(mScanCallback);
             mScanning = false;
             invalidateOptionsMenu();
-
         }
-        ViewHolder holder = (ViewHolder)mDeviceList.getChildAt(position).getTag();
 
-        //holder.connBtn.setVisibility(View.INVISIBLE);
-        holder.bar.setVisibility(View.VISIBLE);
-        holder.deviceStatus.setVisibility(View.INVISIBLE);
+        /*Returning false means there's device connected*/
+        if(!bleManager.connect(device._device.getAddress())){
+            Toast.makeText(this,"Device has been paired. Please disconnect it and then try again.",Toast.LENGTH_LONG).show();
+        }
 
-        bleManager.connect(device.getAddress());
-        //startActivity(intent);
     }
 
     @Override
@@ -206,26 +277,31 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         return true;
     }
 
-
+    @Override
     public void OnDeviceConnectStatusChanged(final BluetoothDevice device,final int state){
         Log.e(TAG,"OnDeviceConnectStatusChanged,state:" + state);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0;i<mLeDeviceListAdapter.getCount();i++){
-                    if(device.getAddress().equals( ((BluetoothDevice)mLeDeviceListAdapter.getItem(i)).getAddress())){
-                        ViewHolder holder = (ViewHolder)mDeviceList.getChildAt(i).getTag();
-                        //holder.connBtn.setVisibility(View.INVISIBLE);
-                        holder.bar.setVisibility(View.INVISIBLE);
-                        holder.deviceStatus.setVisibility(View.VISIBLE);
-                        if(state == BluetoothProfile.STATE_CONNECTED) {
-                            holder.deviceStatus.setText("Online");
-                        }else{
-                            holder.deviceStatus.setText("Offline");
-                        }
-                    }
-
+                /* when connected, remove it from un-paired device. When disconnect, re-scan device*/
+                if(state == BluetoothDataManager.STATE_DISCONNECTED) {
+                    mLeDeviceListAdapter.clear();
+                    scanLeDevice(true);
+                }else if(state == BluetoothProfile.STATE_CONNECTED) {
+                    mLeDeviceListAdapter.removeDevice(device);
+                    mLeDeviceListAdapter.notifyDataSetChanged();
                 }
+
+                for(int i = 0;i<mLeDeviceListAdapter.getCount();i++){
+                    DeviceEntity entity = (DeviceEntity)mLeDeviceListAdapter.getItem(i);
+                    if(device.getAddress().equals( entity._device.getAddress())){
+                        entity._connectState = state;
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+
+                    }
+                }
+
+                updatePairedDevice();
             }
         });
     }
@@ -253,6 +329,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         }
         invalidateOptionsMenu();
     }
+
     // Device scan callback.
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
@@ -262,6 +339,8 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            //mLeDeviceListAdapter.addDevice(device);
+                            //mLeDeviceListAdapter.notifyDataSetChanged();
                             if(device.getType() == DEVICE_TYPE_LE && device.getName() != null && device.getName().length()>0) {
                                 mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.notifyDataSetChanged();
@@ -270,7 +349,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                     });
                 }
             };
-
+    /*
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, final ScanResult result) {
@@ -279,7 +358,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                 @Override
                 public void run() {
                     if(result.getDevice().getType() == DEVICE_TYPE_LE) {
-                        mLeDeviceListAdapter.addDevice(result.getDevice());
+                        mLeDeviceListAdapter.addDevice(new DeviceEntity(result.getDevice(),BluetoothDataManager.STATE_DISCONNECTED));
                         mLeDeviceListAdapter.notifyDataSetChanged();
                     }
                 }
@@ -296,35 +375,48 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
             super.onScanFailed(errorCode);
         }
     };
-
+*/
     // Adapter for holding devices found through scanning.
     private class LeDeviceListAdapter extends BaseAdapter {
-        private ArrayList<BluetoothDevice> mLeDevices;
-        //private LayoutInflater mInflator;
+        private ArrayList<DeviceEntity> mLeDevices;
 
         public LeDeviceListAdapter() {
             super();
             mLeDevices = new ArrayList<>();
-            //mInflator = LayoutInflater.from(BluetoothScanActivity.this); //DeviceScanActivity.this.getLayoutInflater();
         }
 
         public void addDevice(BluetoothDevice device) {
-            if(!mLeDevices.contains(device)) {
-                mLeDevices.add(device);
+            if(!contains(device)) {
+                mLeDevices.add(new DeviceEntity(device,BluetoothDataManager.STATE_DISCONNECTED));
+            }
+
+
+        }
+
+        private boolean contains(BluetoothDevice device){
+            for(DeviceEntity entity: mLeDevices){
+                if(entity._device.equals(device)){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void removeDevice(BluetoothDevice device){
+            for(DeviceEntity entity: mLeDevices){
+                if(entity._device.equals(device)){
+                    mLeDevices.remove(entity);
+                }
             }
         }
 
-        public BluetoothDevice getDevice(int position) {
+        public DeviceEntity getDevice(int position) {
             return mLeDevices.get(position);
         }
 
         public void clear() {
             mLeDevices.clear();
         }
-
-
-
-
 
 
         @Override
@@ -359,15 +451,44 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                 viewHolder = (ViewHolder) view.getTag();
             }
 
-            BluetoothDevice device = mLeDevices.get(i);
-            final String deviceName = device.getName();
-            if (deviceName != null && deviceName.length() > 0)
+            DeviceEntity entity = mLeDevices.get(i);
+            final String deviceName = entity._device.getName();
+            if (deviceName != null && deviceName.length() > 0) {
                 viewHolder.deviceName.setText(deviceName);
-            else
+            } else {
                 viewHolder.deviceName.setText(R.string.unknown_device);
-            viewHolder.deviceAddress.setText(device.getAddress());
+            }
+            viewHolder.deviceAddress.setText(entity._device.getAddress());
+
+            switch (entity._connectState){
+                case BluetoothDataManager.STATE_CONNECTING:
+                    viewHolder.bar.setVisibility(View.VISIBLE);
+                    viewHolder.deviceStatus.setVisibility(View.INVISIBLE);
+                    break;
+                case BluetoothDataManager.STATE_CONNECTED:
+                    viewHolder.bar.setVisibility(View.INVISIBLE);
+                    viewHolder.deviceStatus.setVisibility(View.VISIBLE);
+                    viewHolder.deviceStatus.setText("online");
+                    break;
+                case BluetoothDataManager.STATE_DISCONNECTED:
+                    viewHolder.bar.setVisibility(View.INVISIBLE);
+                    viewHolder.deviceStatus.setVisibility(View.VISIBLE);
+                    viewHolder.deviceStatus.setText("offline");
+                    break;
+                default:
+                    break;
+            }
 
             return view;
+        }
+    }
+
+    public static class DeviceEntity{
+        public BluetoothDevice _device;
+        public int _connectState;
+        public DeviceEntity(BluetoothDevice device, int connectState){
+            _device = device;
+            _connectState = connectState;
         }
     }
 

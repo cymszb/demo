@@ -18,17 +18,12 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.os.ParcelUuid;
-import android.util.FloatProperty;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by yuancui on 12/2/17.
- */
 
 public class BluetoothDataManager {
     final static String TAG = "BluetoothDataManager";
@@ -36,10 +31,15 @@ public class BluetoothDataManager {
     private Context mContext;
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+
     private String mBluetoothDeviceAddress;
+    private String mModelName;
+
     private BluetoothGatt mBluetoothGatt;
 
-    private RecordDatabase mRecordDb;
+    //private Device mCurrentDevice = null;
+
+    private RecordManager mRecordManager;
 
     /*Service and Chars*/
     private BluetoothGattService mServiceA = null;
@@ -64,7 +64,7 @@ public class BluetoothDataManager {
     private BluetoothGattCharacteristic mLEDEnableCharacteristic = null;
     private BluetoothGattCharacteristic mLEDRangeCharacteristic = null;
 
-    private String mModelName;
+
 
     private volatile int mHeartRateConnStatus = SENSOR_CONN_OFF;
     private volatile int mTemperatureConnStatus = SENSOR_CONN_OFF;
@@ -76,8 +76,12 @@ public class BluetoothDataManager {
 
     private int mLastHeartBeatRecord = 0;
     private int mHeartBeat = 0;
+
     private int mSteps = 0;
+
     private float mTemperature = 0;
+    private float mLastTemperatureRecord = 0;
+
     private int mBatteryPercent = 0;
 
     private  int mStepFeature = STEP_STAND;
@@ -132,92 +136,6 @@ public class BluetoothDataManager {
     private final static UUID UUID_LED_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_ENABLE);
     private final static UUID UUID_LED_RANGE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_RANGE);
 
-    private  BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.d(TAG,"onConnectionStateChange, newState:" + newState);
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                mConnectionState = STATE_CONNECTED;
-
-                Log.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        mBluetoothGatt.discoverServices());
-
-                mModelName = gatt.getDevice().getName();
-                //TODO
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                mConnectionState = STATE_DISCONNECTED;
-                reset();
-                /*
-                isHearBeatStarted = false;
-                isTempStarted = false;
-                isStepStarted = false;
-                isBatteryStarted = false;
-                isLED1Started = false;
-                */
-                Log.i(TAG, "Disconnected from GATT server.");
-                //TODO
-            } else if(newState == BluetoothProfile.STATE_CONNECTING){
-                Log.i(TAG, "Connecting from GATT server.");
-            }
-
-            notifyConnectionChanged(gatt.getDevice(),newState);
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.d(TAG,"onServicesDiscovered, status:" + status);
-            if(status == BluetoothGatt.GATT_SUCCESS){
-                //TODO
-                initDataChannel();
-            }
-
-        }
-
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic,
-                                         int status) {
-
-            String value = getCharacteristicValue(characteristic);
-            Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
-                    + ";value: " + value);
-
-            if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
-                setBatteryPercent(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
-                setDailySteps(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
-                setTemperature(Float.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
-                setHeartBeat(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
-                setStepFeature(Integer.valueOf(value));
-            }
-
-        }
-
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt,
-                                            BluetoothGattCharacteristic characteristic) {
-            String value = getCharacteristicValue(characteristic);
-            Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
-                    + ";value: " + value);
-
-            if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
-                setBatteryPercent(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
-                setDailySteps(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
-                setTemperature(Float.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
-                setHeartBeat(Integer.valueOf(value));
-            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
-                setStepFeature(Integer.valueOf(value));
-            }
-        }
-    };
 
     /* CMD type*/
     private final static int TYPE_START_HB = 0;
@@ -253,8 +171,8 @@ public class BluetoothDataManager {
 
     /* Need be called before use */
     private boolean initialise(Context context){
-
-        mRecordDb = RecordDatabase.getInstance(context);
+        mRecordManager = RecordManager.getInstance(context);
+        //mRecordDb = RecordDatabase.getInstance(context);
         // For API level 18 and above, get a reference to BluetoothAdapter through
         // BluetoothManager.
         if (mBluetoothManager == null) {
@@ -317,6 +235,11 @@ public class BluetoothDataManager {
         close();
     }
 
+    private void setCharacteristicWriteType(BluetoothGattCharacteristic characteristic, int type){
+        if(characteristic != null){
+            characteristic.setWriteType(type);
+        }
+    }
 
 
     private void initDataChannel(){
@@ -351,12 +274,8 @@ public class BluetoothDataManager {
 
     private void reset(){
 
-        //isHearBeatStarted = false;
-        //isTempStarted = false;
-        //isStepStarted = false;
-        //isBatteryStarted = false;
-
         mModelName = new String("No Device");
+
         mHeartBeat = 0;
         mSteps = 0;
         mTemperature = 0;
@@ -367,8 +286,6 @@ public class BluetoothDataManager {
         setStepConnStatus(SENSOR_CONN_OFF);
         setTemperatureConnStatus(SENSOR_CONN_OFF);
         setLED1ConnStatus(SENSOR_CONN_OFF);
-
-
 
     }
 
@@ -531,7 +448,87 @@ public class BluetoothDataManager {
         }
     }
 
+    private  BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            Log.d(TAG,"onConnectionStateChange, newState:" + newState);
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                mConnectionState = STATE_CONNECTED;
 
+                Log.i(TAG, "Connected to GATT server.");
+                // Attempts to discover services after successful connection.
+                Log.i(TAG, "Attempting to start service discovery:" + mBluetoothGatt.discoverServices());
+
+                mModelName = gatt.getDevice().getName();
+
+                //TODO
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                mConnectionState = STATE_DISCONNECTED;
+                reset();
+                close();
+                Log.i(TAG, "Disconnected from GATT server.");
+                //TODO
+            } else if(newState == BluetoothProfile.STATE_CONNECTING){
+                mConnectionState = STATE_CONNECTING;
+                Log.i(TAG, "Connecting from GATT server.");
+            }
+
+            notifyConnectionChanged(gatt.getDevice(),mConnectionState);
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d(TAG,"onServicesDiscovered, status:" + status);
+            if(status == BluetoothGatt.GATT_SUCCESS){
+                //TODO
+                initDataChannel();
+            }
+
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic,
+                                         int status) {
+
+            String value = getCharacteristicValue(characteristic);
+            Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
+                    + ";value: " + value);
+
+            if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
+                setBatteryPercent(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
+                setDailySteps(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
+                setTemperature(Float.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
+                setHeartBeat(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
+                setStepFeature(Integer.valueOf(value));
+            }
+
+        }
+
+        @Override
+        public void onCharacteristicChanged(BluetoothGatt gatt,
+                                            BluetoothGattCharacteristic characteristic) {
+            String value = getCharacteristicValue(characteristic);
+            Log.d(TAG,"onCharacteristicChanged, characteristic:" + characteristic.getUuid().toString()
+                    + ";value: " + value);
+
+            if(characteristic.getUuid().equals(UUID_BETTARY_VALUE)){
+                setBatteryPercent(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_VALUE)){
+                setDailySteps(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_TEMP_VALUE)){
+                setTemperature(Float.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_HEART_VALUE)){
+                setHeartBeat(Integer.valueOf(value));
+            }else if(characteristic.getUuid().equals(UUID_STEPS_FEATURE)){
+                setStepFeature(Integer.valueOf(value));
+            }
+        }
+    };
 
     /**
      * Connects to the GATT server hosted on the Bluetooth LE device.
@@ -550,12 +547,17 @@ public class BluetoothDataManager {
             return false;
         }
 
+        if(mConnectionState != STATE_DISCONNECTED){
+            return false;
+        }
+
         // Previously connected device.  Try to reconnect.
         if (mBluetoothDeviceAddress != null && address.equals(mBluetoothDeviceAddress)
                 && mBluetoothGatt != null) {
             Log.d(TAG, "Trying to use an existing mBluetoothGatt for connection.");
             if (mBluetoothGatt.connect()) {
                 mConnectionState = STATE_CONNECTING;
+                notifyConnectionChanged(mBluetoothGatt.getDevice(),mConnectionState);
                 return true;
             } else {
                 return false;
@@ -573,6 +575,8 @@ public class BluetoothDataManager {
         Log.d(TAG, "Trying to create a new connection.");
         mBluetoothDeviceAddress = address;
         mConnectionState = STATE_CONNECTING;
+        notifyConnectionChanged(device,mConnectionState);
+
         return true;
     }
 
@@ -663,7 +667,13 @@ public class BluetoothDataManager {
         if(service == null){
             return null;
         }
-        return service.getCharacteristic(characteristic);
+        BluetoothGattCharacteristic bgc = service.getCharacteristic(characteristic);
+
+        if(bgc != null){
+            setCharacteristicWriteType(bgc,BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+        }
+
+        return bgc;
     }
 
     private String getCharacteristicValue(BluetoothGattCharacteristic characteristic){
@@ -717,7 +727,6 @@ public class BluetoothDataManager {
     public boolean isLED1StatusChanging(){return mLED1ConnStatus == SENSOR_CONN_IN_PROGRESS;}
 
     public void startLED1(boolean start){
-        //isLED1StatusChanging = true;
         setLED1ConnStatus(SENSOR_CONN_IN_PROGRESS);
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_LED1,start));
     }
@@ -732,22 +741,17 @@ public class BluetoothDataManager {
             moment(1000);
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
-            //isLED1Started =start;
-            //isLED1StatusChanging = false;
             setLED1ConnStatus(start?SENSOR_CONN_ON:SENSOR_CONN_OFF);
-
         }else{
             Log.e(TAG,"Not support led.");
         }
     }
+
     public void setLED1ConnStatus(int led1ConnStatus) {
         mLED1ConnStatus = led1ConnStatus;
         notifyLED1Changed(led1ConnStatus);
     }
     public int getLED1ConnStatus(){return mLED1ConnStatus;}
-
-
-
 
 
     public void startViberate(boolean start){
@@ -763,8 +767,13 @@ public class BluetoothDataManager {
         }
     }
 
-    public void recordOnce(){
+    public void recordHeartBeat(){
         mLastHeartBeatRecord = mHeartBeat;
+        mRecordManager.addRecordNow(RecordDatabase.RECORD_TYPE_HEART_RATE,mLastHeartBeatRecord);
+    }
+
+    public void recordTemprature(){
+
     }
 
     public int getLastRecord(){
@@ -782,8 +791,6 @@ public class BluetoothDataManager {
     public int getHeartRateConnStatus(){return mHeartRateConnStatus;}
 
     public void startHeartbeat(boolean start){
-        //isHearBeatStatusChanging = true;
-        //mHeartRateConnStatus = SENSOR_CONN_IN_PROGRESS;
         setHeartRateConnStatus(SENSOR_CONN_IN_PROGRESS);
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_HB,start));
     }
@@ -800,9 +807,6 @@ public class BluetoothDataManager {
             if(start)readCharacteristic(mHearBeatValueCharacteristic);
             moment();
             setCharacteristicNotification(mHearBeatValueCharacteristic,start);
-            //isHearBeatStarted = start;
-            //isHearBeatStatusChanging = false;
-            //mHeartRateConnStatus = start? SENSOR_CONN_ON:SENSOR_CONN_OFF;
             setHeartRateConnStatus(start? SENSOR_CONN_ON:SENSOR_CONN_OFF);
 
         }
@@ -853,9 +857,7 @@ public class BluetoothDataManager {
     public int getTemperatureConnStatus(){return mTemperatureConnStatus;}
 
     public void startTemperature(boolean start){
-        //isTempStatusChanging = true;
         setTemperatureConnStatus(SENSOR_CONN_IN_PROGRESS);
-        //mTemperatureConnStatus = SENSOR_CONN_IN_PROGRESS;
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_TEMP,start));
     }
     private void startTemperatureInternal(boolean start){
@@ -869,23 +871,24 @@ public class BluetoothDataManager {
             if(start)readCharacteristic(mTempValueCharacteristic);
             moment();
             setCharacteristicNotification(mTempValueCharacteristic,start);
-            //isTempStarted = start;
-            //isTempStatusChanging = false;
-            //mTemperatureConnStatus = start? SENSOR_CONN_ON:SENSOR_CONN_OFF;
             setTemperatureConnStatus(start? SENSOR_CONN_ON:SENSOR_CONN_OFF);
         }
     }
 
     private void moment(){
+
         try {
             Thread.sleep(500);
         }catch(Exception e){};
+
     }
 
     private void moment(int ms){
+
         try {
             Thread.sleep(ms);
         }catch(Exception e){};
+
     }
 
     public boolean isBatteryStarted(){return mBatteryConnStatus == SENSOR_CONN_ON;}
@@ -899,8 +902,6 @@ public class BluetoothDataManager {
     }
 
     public void startBattery(boolean start){
-        //isBatteryStatusChanging = true;
-        //mBatteryConnStatus = SENSOR_CONN_IN_PROGRESS;
         setBatteryConnStatus(SENSOR_CONN_IN_PROGRESS);
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_BATTERY,start));
     }
@@ -909,9 +910,6 @@ public class BluetoothDataManager {
             if(start)readCharacteristic(mBatteryValueCharacteristic);
             moment();
             setCharacteristicNotification(mBatteryValueCharacteristic,start);
-            //isBatteryStarted = start;
-            //isBatteryStatusChanging = false;
-            //mBatteryConnStatus = start? SENSOR_CONN_ON:SENSOR_CONN_OFF;
             setBatteryConnStatus(start? SENSOR_CONN_ON:SENSOR_CONN_OFF);
         }
     }
@@ -920,10 +918,14 @@ public class BluetoothDataManager {
         return mModelName;
     }
 
+    public String getBluetoothDeviceAddress(){
+        return mBluetoothDeviceAddress;
+    }
+
 
     public int getHeartBeat(){
-        //if(mHeartBeat == null)return new String("0");
         return mHeartBeat;
+
         /*
         if (mHeartBeat > 150){
             return 150;
@@ -941,7 +943,6 @@ public class BluetoothDataManager {
     }
 
     public int getDailySteps(){
-        //if(mSteps == null)return new String("0");
         return mSteps;
         /*
         if (mSteps > 50000){
@@ -967,7 +968,6 @@ public class BluetoothDataManager {
     }
 
     public float getTemperature(){
-        //if(mTemperature == null)return new String("0");
         return mTemperature;
         /*
         if(mTemperature > 42){
@@ -986,7 +986,6 @@ public class BluetoothDataManager {
     }
 
     public int getBatteryPercent(){
-        //if(mBatteryPercent == null)return new String("0");
         return mBatteryPercent;
         /*
         if(mBatteryPercent < 0){
@@ -1055,12 +1054,19 @@ public class BluetoothDataManager {
         */
         mScanner.startScan(null, settings, callback);
 
-
-
     }
 
     public void stopScan(ScanCallback callback){
         mScanner.stopScan(callback);
+    }
+
+    public static class Device{
+        String _name;
+        String _mac;
+        public Device(String name, String mac){
+            _name = name;
+            _mac = mac;
+        }
     }
 
 

@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+            android:id="@+id/paired_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paired Device"
+            android:textColor="@color/color_white"
+            android:background="@color/color_grey"
+            android:paddingStart="16dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"/>
 
+    <include android:id="@+id/paired_device"
+             layout="@layout/paired_item"
+             android:visibility="gone"/>
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UnPaired Device"
+            android:textColor="@color/color_white"
+            android:background="@color/color_grey"
+            android:paddingStart="16dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
     <ListView
         android:id="@+id/device_list"
         android:layout_width="match_parent"
@@ -13,5 +42,5 @@
 
     </ListView>
 
-</FrameLayout>
+</LinearLayout>
 

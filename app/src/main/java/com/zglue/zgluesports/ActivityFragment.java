@@ -5,7 +5,6 @@ import com.zglue.zgluesports.bluetooth.DataChangedListener;
 import com.zglue.zgluesports.bluetooth.PersonalDataManager;
 import com.zglue.zgluesports.widget.ArcProgress;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -111,6 +110,8 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
     private float getDistance(int steps){
         return 0.55f*(float)steps;
     }
+
+    /*体重60公斤的人，长跑8公里，那么消耗的热量＝60×8×1.036＝497.28 kcal(千卡)*/
 
     private float getCalories(int steps){
         return getDistance(steps) * ((float)PersonalDataManager.getInstance(getContext()).getWeight()) * 1.036f / 1000;

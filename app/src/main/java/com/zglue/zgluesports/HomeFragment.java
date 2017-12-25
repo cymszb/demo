@@ -6,7 +6,6 @@ import com.zglue.zgluesports.bluetooth.DataChangedListener;
 import com.zglue.zgluesports.bluetooth.SensorConnectionStatusListener;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,11 +39,13 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
 
     private BluetoothDataManager bdManager;
 
+    HomeAdapter mHomeAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bdManager = BluetoothDataManager.getInstance(getContext());
-
+        mHomeAdapter = new HomeAdapter(this.getContext());
     }
 
     @Override
@@ -58,8 +59,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+"%");
         initPairButton(mPairBtn);
         mContent = (GridView) mFragmentView.findViewById(R.id.content_grid);
-        HomeAdapter adapter = new HomeAdapter(this.getContext());
-        mContent.setAdapter(adapter);
+        mContent.setAdapter(mHomeAdapter);
         /*
         heartBeatView = (HomeHearBeatView) content.getChildAt(0);
         stepView = (HomeStepView) content.getChildAt(2);
@@ -79,12 +79,12 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         updateAllViewStatus();;
         if(bdManager.isDeviceAvailable()){
             textModelName.setText(bdManager.getModelName());
-            mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_connected_white_24px));
-            mPairBtn.setBackgroundResource(R.drawable.background_pair_btn);
+            //mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_connected_white_24px));
+            //mPairBtn.setBackgroundResource(R.drawable.background_pair_btn);
         }else{
             textModelName.setText("No Device");
-            mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_disabled_white_24px));
-            mPairBtn.setBackgroundResource(R.drawable.background_unpair_btn);
+            //mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_disabled_white_24px_));
+            //mPairBtn.setBackgroundResource(R.drawable.background_unpair_btn);
         }
     }
 

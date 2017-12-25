@@ -22,9 +22,19 @@ public class HomeAdapter extends BaseAdapter {
 
     private final int COUNT = 4;
 
+    HomeTemperatureView mHomeTemperatureView;
+    HomeStepView mHomeStepView;
+    HomeHearBeatView mHomeHearBeatView;
+    HomeSleepView mHomeSleepView;
+
     public HomeAdapter(Context context){
         mContext = context;
         bdManager = BluetoothDataManager.getInstance(mContext);
+        mHomeTemperatureView = new HomeTemperatureView(mContext);
+        mHomeStepView = new HomeStepView(mContext);
+        mHomeHearBeatView = new HomeHearBeatView(mContext);
+        mHomeSleepView = new HomeSleepView(mContext);
+
     }
 
     public int getCount() {
@@ -52,16 +62,16 @@ public class HomeAdapter extends BaseAdapter {
             //HomeItemData data = mDataArray.get(position);
             switch (position){
                 case 0:
-                    convertView = new HomeTemperatureView(mContext);;
+                    convertView = mHomeTemperatureView;;
                     break;
                 case 1:
-                    convertView = new HomeStepView(mContext);
+                    convertView = mHomeStepView;
                     break;
                 case 2:
-                    convertView = new HomeHearBeatView(mContext);
+                    convertView = mHomeHearBeatView;
                     break;
                 case 3:
-                    convertView = new HomeSleepView(mContext);
+                    convertView = mHomeSleepView;
                     break;
                 default:
                     //convertView = new HomeStepView(mContext);

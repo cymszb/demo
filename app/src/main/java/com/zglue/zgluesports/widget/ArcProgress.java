@@ -18,9 +18,6 @@ import com.zglue.zgluesports.R;
 
 import java.text.DecimalFormat;
 
-/**
- * Created by bruce on 11/6/14.
- */
 public class ArcProgress extends View {
     private Paint paint;
     protected Paint textPaint;

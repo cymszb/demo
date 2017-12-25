@@ -28,7 +28,7 @@ public class RecordDatabase {
     /**
      * database version
      */
-    private static final int DATABASE_VERSION=1;
+    private static final int DATABASE_VERSION=2;
 
     /**
      *  database table
@@ -110,7 +110,7 @@ public class RecordDatabase {
                             + COL_VALUE + " INTEGER,"
                             + COL_DATE + " DATE,"
                             + COL_TIME + " TIME,"
-                            + COL_DATETIME + " DATETIME,"
+                            + COL_DATETIME + " DATETIME"
                             + ");";
 
                     mDb.execSQL(createCmd);
@@ -123,7 +123,7 @@ public class RecordDatabase {
                             + COL_VALUE + " INTEGER,"
                             + COL_DATE + " DATE,"
                             + COL_TIME + " TIME,"
-                            + COL_DATETIME + " DATETIME,"
+                            + COL_DATETIME + " DATETIME"
                             + ");";
 
                     mDb.execSQL(createCmd);
@@ -196,7 +196,7 @@ public class RecordDatabase {
 
 
         synchronized(mDbLock) {
-            Cursor cor = mDb.query(TABLE_HEART_RATE, null, null, null, null, null, COL_DATETIME + " DESC");
+            Cursor cor = mDb.query(TABLE_HEART_RATE, null, null, null, null, null, COL_DATETIME + " DESC", "5");
             final ArrayList<RecordItem> items = getItemArrayFormCursor(cor);
             cor.close();
             return items;
@@ -209,7 +209,7 @@ public class RecordDatabase {
 
 
         synchronized(mDbLock) {
-            Cursor cor = mDb.query(TABLE_TEMPERATURE, null, null, null, null, null, COL_DATETIME + " DESC");
+            Cursor cor = mDb.query(TABLE_TEMPERATURE, null, null, null, null, null, COL_DATETIME + " DESC", "5");
             final ArrayList<RecordItem> items = getItemArrayFormCursor(cor);
             cor.close();
             return items;

@@ -17,27 +17,23 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageButton
                 android:id="@+id/pair_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_bluetooth_disabled_white_24px"
-                android:background="@drawable/background_unpair_btn"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                app:srcCompat="@drawable/ic_settings_bluetooth_white_24px"
+                android:background="@drawable/ripple_pink"
                 android:visibility="visible"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="10dp"
                 android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/linearLayout"
-                android:layout_marginTop="14dp" />
+                android:layout_alignParentEnd="true"
+               />
 
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                android:id="@+id/linearLayout">
+                    android:gravity="center" >
 
 
                 <ImageView
@@ -94,7 +90,7 @@
                 />
             <RelativeLayout
                     android:layout_width="wrap_content"
-                     android:layout_height="32dp"
+                     android:layout_height="34dp"
                     android:orientation="vertical"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp">
@@ -111,11 +107,12 @@
                         android:textStyle="bold"
                 />
 
-                <ImageView android:layout_width="wrap_content"
+                <ImageView android:layout_width="28dp"
                            android:layout_height="wrap_content"
                            android:rotation="90"
                            android:layout_centerInParent="true"
                            android:layout_alignParentBottom="true"
+                           android:scaleY="1.2"
                            app:srcCompat="@drawable/ic_battery_std_white_24px"
                 />
 
