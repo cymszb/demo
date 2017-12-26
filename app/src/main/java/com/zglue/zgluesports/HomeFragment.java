@@ -76,13 +76,15 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         bdManager.addConnectionListener(this);
         bdManager.addDataChangedListener(this);
         bdManager.addSensorConnectionStatusListener(this);
-        updateAllViewStatus();;
+        updateAllViewStatus();
         if(bdManager.isDeviceAvailable()){
             textModelName.setText(bdManager.getModelName());
+            textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+"%");
             //mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_connected_white_24px));
             //mPairBtn.setBackgroundResource(R.drawable.background_pair_btn);
         }else{
             textModelName.setText("No Device");
+            textBatteryPercent.setText(String.valueOf(bdManager.getBatteryPercent())+"%");
             //mPairBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_bluetooth_disabled_white_24px_));
             //mPairBtn.setBackgroundResource(R.drawable.background_unpair_btn);
         }
@@ -111,7 +113,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
 
     private void updateAllViews(){
         updateAllViewStatus();
-        //updateAllViewData();
+        updateAllViewData();
     }
 
     private void updateAllViewStatus(){
@@ -153,6 +155,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         updateHeartRate();
         updateSteps();
         updateTemperature();
+
     }
 
     void updateHeartRate(){
@@ -170,6 +173,7 @@ public class HomeFragment extends Fragment implements ConnectionListener,DataCha
         ((HomeTemperatureView)mContent.getChildAt(0)).OnTempChanged(bdManager.getTemperature());
     }
 
+    @Override
     public void OnDeviceConnectStatusChanged(final BluetoothDevice device, final int state){
         Log.e(TAG,"OnDeviceConnectStatusChanged,state:" + state);
         getActivity().runOnUiThread(new Runnable() {

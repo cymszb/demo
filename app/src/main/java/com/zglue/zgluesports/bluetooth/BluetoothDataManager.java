@@ -246,13 +246,12 @@ public class BluetoothDataManager {
         mServiceA = findService(UUID_SERVICE_A);
         mServiceB = findService(UUID_SERVICE_B);
         mHearBeatEnableCharacteristic = findCharacteristic(mServiceB,UUID_HEART_ENABLE);
-        mHearBeatValueCharacteristic = findCharacteristic(mServiceB,UUID_HEART_VALUE);;
-        mStepsEnableCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_ENABLE);;
-        mStepsValueCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_VALUE);;
-        mStepsFeatureCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_FEATURE);;
-        mTempEnableCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_ENABLE);;
-        mTempValueCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_VALUE);;
-
+        mHearBeatValueCharacteristic = findCharacteristic(mServiceB,UUID_HEART_VALUE);
+        mStepsEnableCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_ENABLE);
+        mStepsValueCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_VALUE);
+        mStepsFeatureCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_FEATURE);
+        mTempEnableCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_ENABLE);
+        mTempValueCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_VALUE);
         mBatteryValueCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_VALUE);
         mBatteryTimCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_TIM);
         mBatteryChargeRateCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_CHARGE_RATE);
