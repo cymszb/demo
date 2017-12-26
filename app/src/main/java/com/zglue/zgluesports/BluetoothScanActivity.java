@@ -403,11 +403,18 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         }
 
         public void removeDevice(BluetoothDevice device){
+            DeviceEntity tmp = null;
             for(DeviceEntity entity: mLeDevices){
                 if(entity._device.equals(device)){
-                    mLeDevices.remove(entity);
+                    //mLeDevices.remove(entity);
+                    tmp = entity;
+                    break;
                 }
             }
+            if(tmp !=null){
+                mLeDevices.remove(tmp);
+            }
+
         }
 
         public DeviceEntity getDevice(int position) {
