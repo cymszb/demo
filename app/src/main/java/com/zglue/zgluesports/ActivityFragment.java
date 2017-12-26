@@ -1,16 +1,23 @@
 package com.zglue.zgluesports;
 
+import com.github.mikephil.charting.data.Entry;
 import com.zglue.zgluesports.bluetooth.BluetoothDataManager;
 import com.zglue.zgluesports.bluetooth.DataChangedListener;
 import com.zglue.zgluesports.bluetooth.PersonalDataManager;
+import com.zglue.zgluesports.bluetooth.RecordItem;
+import com.zglue.zgluesports.bluetooth.RecordManager;
 import com.zglue.zgluesports.widget.ArcProgress;
+import com.zglue.zgluesports.widget.ChartView;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 /**
@@ -25,6 +32,7 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
     private TextView mTargetSteps;
     private TextView mCurSteps;
     private ArcProgress mArcProgress;
+    private ChartView mChartView;
 
     private TextView mCalories;
     private TextView mFat;
@@ -32,6 +40,7 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
 
     private PersonalDataManager pdManager;
     private BluetoothDataManager bdManager;
+    private RecordManager mRecordManager;
 
     private int mTargetStepsValue = 0;
     private int mCurStepValue = 0;
@@ -42,7 +51,11 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
         super.onCreate(savedInstanceState);
         pdManager = PersonalDataManager.getInstance(getContext());
         bdManager = BluetoothDataManager.getInstance(getContext());
+        mRecordManager = RecordManager.getInstance(getContext());
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,10 +64,34 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
         mTargetSteps = (TextView)mFragmentView.findViewById(R.id.progress_bar_target);
         mCurSteps = (TextView) mFragmentView.findViewById(R.id.progress_bar_steps);
         mArcProgress = (ArcProgress)mFragmentView.findViewById(R.id.arc_progress);
+        mChartView = (ChartView)mFragmentView.findViewById(R.id.chat_view);
 
         mCalories = (TextView)mFragmentView.findViewById(R.id.activity_calories);
         mFat = (TextView)mFragmentView.findViewById(R.id.activity_fat);
         mDistance = (TextView)mFragmentView.findViewById(R.id.activity_distance);
+
+        mRecordManager.queryAllSteps(new RecordManager.QueryCallback() {
+            @Override
+            public void onDone(final ArrayList<RecordItem> items) {
+                Log.e("Demo","Query steps done:" + items.size());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        ArrayList<Entry> entries = new ArrayList<>(7);
+                        for(int i = 0; i < 6; i++){
+                            if(i+1 <= items.size()) {
+                                entries.add(new Entry(i, items.get(i)._value));
+                            }else{
+                                entries.add(new Entry(i,0));
+                            }
+                        }
+                        mChartView.setData(entries);
+                    }
+                });
+            }
+        });
+
         return mFragmentView;
     }
 

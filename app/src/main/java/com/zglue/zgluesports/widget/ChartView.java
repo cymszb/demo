@@ -107,15 +107,16 @@ public class ChartView extends FrameLayout {
         });
 
         CombinedData data = new CombinedData();
-
         data.setData(generateLineData());
+
+        //data.setData(generateLineData());
         //data.setData(generateBarData());
         //data.setData(generateBubbleData());
         //data.setData(generateScatterData());
         //data.setData(generateCandleData());
         //data.setValueTypeface(mTfLight);
 
-        xAxis.setAxisMaximum(data.getXMax() + 0.25f);
+       // xAxis.setAxisMaximum(7 + 0.25f);
 
         chart.setData(data);
         chart.invalidate();
@@ -129,9 +130,9 @@ public class ChartView extends FrameLayout {
         ArrayList<Entry> entries = new ArrayList<Entry>();
 
         for (int index = 0; index < itemcount; index++)
-            entries.add(new Entry(index, 1000*getRandom(15, 5)));
+            entries.add(new Entry(index, 0));
 
-        LineDataSet set = new LineDataSet(entries, "Target");
+        LineDataSet set = new LineDataSet(entries, "Daily Steps");
         set.setColor(Color.rgb(240, 238, 70));
         set.setLineWidth(2.5f);
         set.setCircleColor(Color.rgb(240, 238, 70));
@@ -148,6 +149,38 @@ public class ChartView extends FrameLayout {
 
         return d;
     }
+
+    public void setData(ArrayList<Entry> entries){
+
+        LineData d = new LineData();
+
+        /*
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+
+        for (int index = 0; index < itemcount; index++)
+            entries.add(new Entry(index, 1000*getRandom(15, 5)));
+        */
+        LineDataSet set = new LineDataSet(entries, "Daily Steps");
+        set.setColor(Color.rgb(240, 238, 70));
+        set.setLineWidth(2.5f);
+        set.setCircleColor(Color.rgb(240, 238, 70));
+        set.setCircleRadius(5f);
+        set.setFillColor(Color.rgb(240, 238, 70));
+        set.setMode(LineDataSet.Mode.LINEAR);
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(Color.rgb(240, 238, 70));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        d.addDataSet(set);
+
+        CombinedData data = new CombinedData();
+        data.setData(d);
+        chart.setData(data);
+        chart.invalidate();
+    }
+
     private BarData generateBarData() {
 
         ArrayList<BarEntry> entries = new ArrayList<>();

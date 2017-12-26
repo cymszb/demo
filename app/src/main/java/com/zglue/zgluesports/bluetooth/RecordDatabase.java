@@ -28,16 +28,16 @@ public class RecordDatabase {
     /**
      * database version
      */
-    private static final int DATABASE_VERSION=2;
+    private static final int DATABASE_VERSION=3;
 
     /**
      *  database table
      */
     private static final String TABLE_HEART_RATE="heart_rate";
-    private static final String TABLE_TEMPERATURE="temperature";
+    private static final String TABLE_STEPS="daily_steps";
 
     public final static int RECORD_TYPE_HEART_RATE = 1;
-    public final static int RECORD_TYPE_TEMPERATURE = 2;
+    public final static int RECORD_TYPE_STEPS = 2;
 
     /**
      * database columns
@@ -99,7 +99,7 @@ public class RecordDatabase {
                     mDb.execSQL(dropCmd);
 
                     dropCmd = "DROP TABLE IF EXISTS "
-                            + TABLE_TEMPERATURE + ";";
+                            + TABLE_STEPS + ";";
                     mDb.execSQL(dropCmd);
 
                     /*Create heart rate table*/
@@ -117,7 +117,7 @@ public class RecordDatabase {
 
                     /*Create temperature table*/
                     createCmd = "CREATE TABLE "
-                            + TABLE_TEMPERATURE
+                            + TABLE_STEPS
                             + "("
                             + COL_ID + " INTEGER PRIMARY KEY,"
                             + COL_VALUE + " INTEGER,"
@@ -155,8 +155,8 @@ public class RecordDatabase {
             cv.put(COL_DATETIME, date.toString() + " " +time.toString());
             if(item._type == RECORD_TYPE_HEART_RATE) {
                 mDb.insert(TABLE_HEART_RATE, null, cv);
-            }else if(item._type == RECORD_TYPE_TEMPERATURE){
-                mDb.insert(TABLE_TEMPERATURE, null, cv);
+            }else if(item._type == RECORD_TYPE_STEPS){
+                mDb.insert(TABLE_STEPS, null, cv);
             }
         }
     }
@@ -173,8 +173,8 @@ public class RecordDatabase {
         synchronized(mDbLock){
             if(item._type == RECORD_TYPE_HEART_RATE) {
                 mDb.delete(TABLE_HEART_RATE, whereClause, whereArgs);
-            }else if(item._type == RECORD_TYPE_TEMPERATURE){
-                mDb.delete(TABLE_TEMPERATURE, whereClause, whereArgs);
+            }else if(item._type == RECORD_TYPE_STEPS){
+                mDb.delete(TABLE_STEPS, whereClause, whereArgs);
             }
         }
     }
@@ -203,13 +203,13 @@ public class RecordDatabase {
         }
     }
 
-    public final ArrayList<RecordItem> queryAllTemperatureRecord(){
+    public final ArrayList<RecordItem> queryAllSteps(){
         if(mDb == null)
             return null;
 
 
         synchronized(mDbLock) {
-            Cursor cor = mDb.query(TABLE_TEMPERATURE, null, null, null, null, null, COL_DATETIME + " DESC", "5");
+            Cursor cor = mDb.query(TABLE_STEPS, null, null, null, null, null, COL_DATETIME + " DESC", "7");
             final ArrayList<RecordItem> items = getItemArrayFormCursor(cor);
             cor.close();
             return items;
@@ -293,8 +293,8 @@ public class RecordDatabase {
         synchronized(mDbLock) {
             if(type == RECORD_TYPE_HEART_RATE) {
                 mDb.delete(TABLE_HEART_RATE, whereClause, whereArgs);
-            }else if(type == RECORD_TYPE_TEMPERATURE){
-                mDb.delete(TABLE_TEMPERATURE, whereClause, whereArgs);
+            }else if(type == RECORD_TYPE_STEPS){
+                mDb.delete(TABLE_STEPS, whereClause, whereArgs);
             }
         }
     }

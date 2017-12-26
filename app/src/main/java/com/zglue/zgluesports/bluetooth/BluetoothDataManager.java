@@ -63,6 +63,7 @@ public class BluetoothDataManager {
 
     private BluetoothGattCharacteristic mLEDEnableCharacteristic = null;
     private BluetoothGattCharacteristic mLEDRangeCharacteristic = null;
+    private BluetoothGattCharacteristic mLEDBrightnessCharacteristic = null;
 
 
 
@@ -78,6 +79,7 @@ public class BluetoothDataManager {
     private int mHeartBeat = 0;
 
     private int mSteps = 0;
+    private int mLastSteps = 0;
 
     private float mTemperature = 0;
     private float mLastTemperatureRecord = 0;
@@ -135,6 +137,7 @@ public class BluetoothDataManager {
 
     private final static UUID UUID_LED_ENABLE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_ENABLE);
     private final static UUID UUID_LED_RANGE = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_RANGE);
+    private final static UUID UUID_LED_BRIGHTNESS = UUID.fromString(ZglueBluetoothAttributes.ATTR_LED_BRIGHTNESS);
 
 
     /* CMD type*/
@@ -245,6 +248,56 @@ public class BluetoothDataManager {
     private void initDataChannel(){
         mServiceA = findService(UUID_SERVICE_A);
         mServiceB = findService(UUID_SERVICE_B);
+
+        mHearBeatEnableCharacteristic = findCharacteristic(mServiceA,UUID_HEART_ENABLE);
+        if(mHearBeatEnableCharacteristic==null) mHearBeatEnableCharacteristic = findCharacteristic(mServiceB,UUID_HEART_ENABLE);
+
+        mHearBeatValueCharacteristic = findCharacteristic(mServiceA,UUID_HEART_VALUE);
+        if(mHearBeatValueCharacteristic == null)mHearBeatValueCharacteristic = findCharacteristic(mServiceB,UUID_HEART_VALUE);
+
+        mStepsEnableCharacteristic = findCharacteristic(mServiceA,UUID_STEPS_ENABLE);
+        if(mStepsEnableCharacteristic==null)mStepsEnableCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_ENABLE);
+
+        mStepsValueCharacteristic = findCharacteristic(mServiceA,UUID_STEPS_VALUE);
+        if(mStepsValueCharacteristic==null)mStepsValueCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_VALUE);
+
+        mStepsFeatureCharacteristic = findCharacteristic(mServiceA,UUID_STEPS_FEATURE);
+        if(mStepsFeatureCharacteristic==null)mStepsFeatureCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_FEATURE);
+
+        mTempEnableCharacteristic = findCharacteristic(mServiceA,UUID_TEMP_ENABLE);
+        if(mTempEnableCharacteristic==null)mTempEnableCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_ENABLE);
+
+        mTempValueCharacteristic = findCharacteristic(mServiceA,UUID_TEMP_VALUE);
+        if(mTempValueCharacteristic==null)mTempValueCharacteristic = findCharacteristic(mServiceB,UUID_TEMP_VALUE);
+
+        mBatteryValueCharacteristic = findCharacteristic(mServiceA,UUID_BETTARY_VALUE);
+        if(mBatteryValueCharacteristic==null)mBatteryValueCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_VALUE);
+
+        mBatteryTimCharacteristic = findCharacteristic(mServiceA,UUID_BETTARY_TIM);
+        if(mBatteryTimCharacteristic==null)mBatteryTimCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_TIM);
+
+        mBatteryChargeRateCharacteristic = findCharacteristic(mServiceA,UUID_BETTARY_CHARGE_RATE);
+        if(mBatteryChargeRateCharacteristic==null)mBatteryChargeRateCharacteristic = findCharacteristic(mServiceB,UUID_BETTARY_CHARGE_RATE);
+
+        mVibratorEnableCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_ENABLE);
+        if(mVibratorEnableCharacteristic==null)mVibratorEnableCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_ENABLE);
+
+        mVibratorAutoTurnOffeCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_AUTO_TURN_OFF);
+        if(mVibratorAutoTurnOffeCharacteristic==null)mVibratorAutoTurnOffeCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_AUTO_TURN_OFF);
+
+        mVibratorDuaratuinCharacteristic = findCharacteristic(mServiceA,UUID_VIBRATOR_DURATION);
+        if(mVibratorDuaratuinCharacteristic==null)mVibratorDuaratuinCharacteristic = findCharacteristic(mServiceB,UUID_VIBRATOR_DURATION);
+
+        mLEDEnableCharacteristic = findCharacteristic(mServiceA,UUID_LED_ENABLE);
+        if(mLEDEnableCharacteristic==null)mLEDEnableCharacteristic = findCharacteristic(mServiceB,UUID_LED_ENABLE);
+
+        mLEDRangeCharacteristic = findCharacteristic(mServiceA,UUID_LED_RANGE);
+        if(mLEDRangeCharacteristic==null)mLEDRangeCharacteristic = findCharacteristic(mServiceB,UUID_LED_RANGE);
+
+        mLEDBrightnessCharacteristic = findCharacteristic(mServiceA,UUID_LED_BRIGHTNESS);
+        if(mLEDBrightnessCharacteristic==null)mLEDBrightnessCharacteristic = findCharacteristic(mServiceB,UUID_LED_BRIGHTNESS);
+
+        /*
         mHearBeatEnableCharacteristic = findCharacteristic(mServiceB,UUID_HEART_ENABLE);
         mHearBeatValueCharacteristic = findCharacteristic(mServiceB,UUID_HEART_VALUE);
         mStepsEnableCharacteristic = findCharacteristic(mServiceB,UUID_STEPS_ENABLE);
@@ -262,7 +315,7 @@ public class BluetoothDataManager {
 
         mLEDEnableCharacteristic = findCharacteristic(mServiceA,UUID_LED_ENABLE);
         mLEDRangeCharacteristic = findCharacteristic(mServiceA,UUID_LED_RANGE);
-
+        */
         startBattery(true);
 
         startSteps(true);
@@ -324,7 +377,7 @@ public class BluetoothDataManager {
     }
 
     public boolean isSupportLED1(){
-        return isDeviceAvailable() && mLEDRangeCharacteristic != null && mLEDEnableCharacteristic != null;
+        return isDeviceAvailable() && mLEDRangeCharacteristic != null && mLEDEnableCharacteristic != null && UUID_LED_BRIGHTNESS != null;
     }
 
 
@@ -463,6 +516,7 @@ public class BluetoothDataManager {
                 //TODO
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 mConnectionState = STATE_DISCONNECTED;
+                recordSteps();
                 reset();
                 close();
                 Log.i(TAG, "Disconnected from GATT server.");
@@ -738,11 +792,16 @@ public class BluetoothDataManager {
             mBluetoothGatt.writeCharacteristic(mLEDRangeCharacteristic);
 
             moment(1000);
+            mLEDBrightnessCharacteristic.setValue(new byte[]{0x10});
+            mBluetoothGatt.writeCharacteristic(mLEDBrightnessCharacteristic);
+
+            moment(1000);
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
+
             setLED1ConnStatus(start?SENSOR_CONN_ON:SENSOR_CONN_OFF);
         }else{
-            Log.e(TAG,"Not support led.");
+            Log.e(TAG,"No support led.");
         }
     }
 
@@ -771,8 +830,15 @@ public class BluetoothDataManager {
         mRecordManager.addRecordNow(RecordDatabase.RECORD_TYPE_HEART_RATE,mLastHeartBeatRecord);
     }
 
+
+
     public void recordTemprature(){
 
+    }
+
+    public void recordSteps(){
+        mLastSteps = mSteps;
+        mRecordManager.addRecordNow(RecordDatabase.RECORD_TYPE_STEPS,mLastSteps);
     }
 
     public int getLastRecord(){

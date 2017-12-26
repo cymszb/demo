@@ -166,6 +166,7 @@
         android:background="@drawable/background_activity_weekly">
 
         <com.zglue.zgluesports.widget.ChartView
+            android:id="@+id/chat_view"
             android:layout_width="match_parent"
             android:layout_height="196dp"
             android:layout_marginTop="16dp"

@@ -36,7 +36,7 @@ public class RecordManager {
 
     //Task
     private static final int QUERY_ALL_HB = 1;
-    private static final int QUERY_ALL_TEMP = 2;
+    private static final int QUERY_ALL_STEPS = 2;
     private static final int INTSERT = 3;
     private static final int CLEAR_HB = 4;
     private static final int CLEAR_TEMP = 5;
@@ -58,10 +58,10 @@ public class RecordManager {
                     cb.onDone(datas);
                 }
                 break;
-                case QUERY_ALL_TEMP:{
+                case QUERY_ALL_STEPS:{
                     QueryCallback cb = (QueryCallback)msg.obj;
                     if(cb == null)return;
-                    ArrayList<RecordItem> datas = RecordDatabase.getInstance(mContext).queryAllTemperatureRecord();
+                    ArrayList<RecordItem> datas = RecordDatabase.getInstance(mContext).queryAllSteps();
                     cb.onDone(datas);
                 }
                 break;
@@ -72,7 +72,7 @@ public class RecordManager {
                     RecordDatabase.getInstance(mContext).clearRecord(RecordDatabase.RECORD_TYPE_HEART_RATE);
                     break;
                 case CLEAR_TEMP:
-                    RecordDatabase.getInstance(mContext).clearRecord(RecordDatabase.RECORD_TYPE_TEMPERATURE);
+                    RecordDatabase.getInstance(mContext).clearRecord(RecordDatabase.RECORD_TYPE_STEPS);
                     break;
                 default:
                     Log.v(LOG_TAG, "Unhandled message: " + msg.what);
@@ -116,8 +116,8 @@ public class RecordManager {
         mHistoryHandler.sendMessage(mHistoryHandler.obtainMessage(QUERY_ALL_HB,cb));
     }
 
-    public void queryAllTemperature(QueryCallback cb){
-        mHistoryHandler.sendMessage(mHistoryHandler.obtainMessage(QUERY_ALL_HB,cb));
+    public void queryAllSteps(QueryCallback cb){
+        mHistoryHandler.sendMessage(mHistoryHandler.obtainMessage(QUERY_ALL_STEPS,cb));
     }
 
     public void addRecordNow( final int type , final int value){
