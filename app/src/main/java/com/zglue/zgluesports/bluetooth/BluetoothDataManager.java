@@ -332,6 +332,7 @@ public class BluetoothDataManager {
         mSteps = 0;
         mTemperature = 0;
         mBatteryPercent = 0;
+        mStepFeature = STEP_STAND;
 
         setBatteryConnStatus(SENSOR_CONN_OFF);
         setHeartRateConnStatus(SENSOR_CONN_OFF);
