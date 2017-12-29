@@ -1020,6 +1020,9 @@ public class BluetoothDataManager {
         }
         */
     }
+    public void resetHearBeat(){
+        mHeartBeat = 0;
+    }
 
     public void setHeartBeat(int heartBeat){
         mHeartBeat = heartBeat;

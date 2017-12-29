@@ -148,6 +148,10 @@ public class HomeHearBeatView extends FrameLayout {
     }
 
     public void setButtonEnable(boolean isEnable){
+        if(isEnable){
+            /* reset HRM , didn't  remember last data */
+            bdManager.resetHearBeat();
+        }
         btnHbStart.setAlpha(isEnable?1f:0.5f);
         btnHbStart.setEnabled(isEnable);
     }
