@@ -71,15 +71,29 @@ public class HomeStepView extends FrameLayout {
             textStepValue.setText("0");
         }
 
-        if(bdManager.getStepFeature() == BluetoothDataManager.STEP_STAND){
+        int step_mode = bdManager.getStepFeature();
+        switch(step_mode){
+            case BluetoothDataManager.STEP_STAND:
+            case BluetoothDataManager.STEP_IDLE:
+                statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_stand));
+                break;
+            case BluetoothDataManager.STEP_FEATURE_WALK:
+                statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk_white_24px));
+                break;
+            case BluetoothDataManager.STEP_FEATURE_RUN:
+                statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_run_white_24px));
+                break;
+        }
+        /*
+        if( step_mode == BluetoothDataManager.STEP_STAND || step_mode == BluetoothDataManager.STEP_IDLE){
             statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_man_stand));
-        }else if(bdManager.getStepFeature() == BluetoothDataManager.STEP_FEATURE_WALK){
+        }else if(step_mode == ){
             statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_walk_white_24px));
 
-        }else if(bdManager.getStepFeature() == BluetoothDataManager.STEP_FEATURE_RUN){
+        }else if(step_mode == BluetoothDataManager.STEP_FEATURE_RUN){
             statusFeature.setImageDrawable(getResources().getDrawable(R.drawable.ic_directions_run_white_24px));
-
         }
+        */
     }
 
     private void updateStatus(int progress){

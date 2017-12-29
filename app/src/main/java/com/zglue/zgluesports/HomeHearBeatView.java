@@ -135,8 +135,10 @@ public class HomeHearBeatView extends FrameLayout {
             setButtonEnable(true);
             //isStarted = true;
         }else{
+            /* should always stop time */
+            forceStopProgress();
             setButtonEnable(false);
-            //isStarted = false;
+            isStarted = false;
         }
         updateData();
     }

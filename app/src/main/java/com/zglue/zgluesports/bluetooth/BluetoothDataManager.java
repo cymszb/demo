@@ -93,6 +93,7 @@ public class BluetoothDataManager {
     public static final int STEP_STAND = 0;
     public static final int STEP_FEATURE_WALK = 1;
     public static final int STEP_FEATURE_RUN = 2;
+    public static final int STEP_IDLE = 3;
 
 
     public static final int STATE_DISCONNECTED = 0;
@@ -332,6 +333,7 @@ public class BluetoothDataManager {
         mSteps = 0;
         mTemperature = 0;
         mBatteryPercent = 0;
+        mStepFeature = STEP_STAND;
 
         setBatteryConnStatus(SENSOR_CONN_OFF);
         setHeartRateConnStatus(SENSOR_CONN_OFF);
