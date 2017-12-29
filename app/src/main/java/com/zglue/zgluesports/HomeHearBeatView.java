@@ -90,6 +90,7 @@ public class HomeHearBeatView extends FrameLayout {
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             statusDot.setImageDrawable(getResources().getDrawable(R.drawable.circle_grey));
             setButtonEnable(false);
+            forceStopProgress();
             return;
         }
 
@@ -110,7 +111,7 @@ public class HomeHearBeatView extends FrameLayout {
             case BluetoothDataManager.SENSOR_CONN_OFF:
                 btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
                 statusDot.setImageDrawable(getResources().getDrawable(R.drawable.circle_grey));
-                //forceStopProgress();
+                forceStopProgress();
                 setButtonEnable(true);
                 break;
             default:
@@ -210,6 +211,7 @@ public class HomeHearBeatView extends FrameLayout {
                 mTimerTask = null;
             }
             isTesting = false;
+            isStarted = false;
         }
     }
 

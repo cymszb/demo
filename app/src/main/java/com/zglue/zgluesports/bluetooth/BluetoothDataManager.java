@@ -926,7 +926,7 @@ public class BluetoothDataManager {
         mBlueToothThreadHandler.sendMessage(mBlueToothThreadHandler.obtainMessage(TYPE_START_TEMP,start));
     }
     private void startTemperatureInternal(boolean start){
-        if(isSupportHeartBeat()){
+        if(isSupportTemperature()){
             /* write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
             mTempEnableCharacteristic.setValue(values_write);

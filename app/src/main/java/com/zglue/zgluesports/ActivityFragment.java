@@ -102,7 +102,6 @@ public class ActivityFragment extends Fragment implements DataChangedListener{
         mTargetStepsValue = pdManager.getTargetSteps();
         mCurStepValue = bdManager.getDailySteps();
         mTargetSteps.setText(String.valueOf(mTargetStepsValue));
-
         updateView();
     }
 
