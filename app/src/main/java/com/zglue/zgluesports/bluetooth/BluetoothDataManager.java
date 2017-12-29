@@ -90,6 +90,7 @@ public class BluetoothDataManager {
 
     private int mConnectionState = STATE_DISCONNECTED;
 
+    public static final int HRM_VALID_LIMIT = 20;
     public static final int STEP_STAND = 0;
     public static final int STEP_FEATURE_WALK = 1;
     public static final int STEP_FEATURE_RUN = 2;
@@ -378,8 +379,20 @@ public class BluetoothDataManager {
         return isSupportVibrator() && mVibratorAutoTurnOffeCharacteristic != null && mVibratorDuaratuinCharacteristic != null;
     }
 
+    public boolean isSupportLED1_Range(){
+        return isDeviceAvailable() && mLEDRangeCharacteristic != null;
+    }
+
+    public boolean isSupportLED1_Brightness(){
+        return isDeviceAvailable() && mLEDBrightnessCharacteristic != null;
+    }
+
     public boolean isSupportLED1(){
-        return isDeviceAvailable() && mLEDRangeCharacteristic != null && mLEDEnableCharacteristic != null && UUID_LED_BRIGHTNESS != null;
+
+//        return isDeviceAvailable() && mLEDRangeCharacteristic != null && mLEDEnableCharacteristic != null && mLEDBrightnessCharacteristic != null;
+        /* Austin_2D only have enable attribute */
+        return isDeviceAvailable() && mLEDEnableCharacteristic != null;
+
     }
 
 
@@ -790,14 +803,18 @@ public class BluetoothDataManager {
         if(isSupportLED1()){
             /*write enable*/
             byte[] values_write = start?(new byte[]{1}):(new byte[]{0});
-            mLEDRangeCharacteristic.setValue(values_write);
-            mBluetoothGatt.writeCharacteristic(mLEDRangeCharacteristic);
+            if(isSupportLED1_Range()) {
+                mLEDRangeCharacteristic.setValue(values_write);
+                mBluetoothGatt.writeCharacteristic(mLEDRangeCharacteristic);
+                moment(1000);
+            }
 
-            moment(1000);
-            mLEDBrightnessCharacteristic.setValue(new byte[]{0x10});
-            mBluetoothGatt.writeCharacteristic(mLEDBrightnessCharacteristic);
+            if(isSupportLED1_Brightness()) {
+                mLEDBrightnessCharacteristic.setValue(new byte[]{0x10});
+                mBluetoothGatt.writeCharacteristic(mLEDBrightnessCharacteristic);
+                moment(1000);
+            }
 
-            moment(1000);
             mLEDEnableCharacteristic.setValue(values_write);
             mBluetoothGatt.writeCharacteristic(mLEDEnableCharacteristic);
 

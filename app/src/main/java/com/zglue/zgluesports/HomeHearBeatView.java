@@ -77,7 +77,12 @@ public class HomeHearBeatView extends FrameLayout {
     private void updateData(){
         if(isStarted/*bdManager.isHearBeatStarted()*/){
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_24px));
-            textHbValue.setText(String.valueOf(bdManager.getHeartBeat()));
+            int hrm = bdManager.getHeartBeat();
+            if(hrm < bdManager.HRM_VALID_LIMIT) {
+                textHbValue.setText("--");
+            } else{
+                textHbValue.setText(String.valueOf(bdManager.getHeartBeat()));
+            }
         }else{
             btnHbStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_24px));
             textHbValue.setText(String.valueOf(bdManager.getLastRecord()));
